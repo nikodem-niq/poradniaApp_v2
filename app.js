@@ -1,5 +1,8 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
+
+app.use(cors());
 
 const fetchDataRoutes = require('./routes/fetchData');
 app.use('/fetchData', fetchDataRoutes)
