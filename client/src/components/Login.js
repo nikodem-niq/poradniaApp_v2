@@ -1,28 +1,29 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import axios from 'axios';
+import { loginUser } from "../middlewares/auth";
 
 const Login = () => {
 
-    const [state, setState] = useState({
-        login: "",
-        password: ""
-    });
+    const [login, setLogin] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleChange = e => {
-        const { name, value } = e.target;
-        setState({
-            ...setState,
-            [name] : value
-        })
+        switch(e.target.name) {
+            case 'login':
+                setLogin(e.target.value);
+                break;
+            case 'password':
+                setPassword(e.target.value);
+                break;
+            default:
+                console.log('handle change');
+        }
+
     }
 
     const handleSubmit = e => {
         e.preventDefault();
-        axios.get('/fetchData/test').then(res => {
-            console.log(res.data)
-        });
-
+        loginUser(login, password, '/input-dashboard');         // Login - Password - Path to redirect
     }
 
     return (
