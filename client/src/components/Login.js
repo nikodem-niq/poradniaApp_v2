@@ -51,6 +51,14 @@ const OuterWrapper = styled.form`
         border-radius: 4px;
         border: black solid 0.2px;
         box-shadow: 3px 3px 3px 0.2px gray;
+        transition: ease-in-out 0.2s all;
+    }
+
+    input[type="text"]:focus, input[type="password"]:focus {
+        transform: scale(1.05,1.05);
+        color: #009400;
+        box-shadow: 3px 3px 3px 0.2px #009400;
+
     }
 
     input[type="submit"] {

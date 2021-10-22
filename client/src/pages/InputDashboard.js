@@ -1,10 +1,20 @@
 import styled from "styled-components";
-import { logoutUser } from "../middlewares/auth";
+import ControllerBlock from "../components/ControllerBlock";
+import Navbar from "../components/Navbar";
 
 const InputDashboard = () => {
     return (
-        <h1 onClick={() => { logoutUser('/login') }}>wyloguj</h1>
+        <OuterWrapper>
+            <Navbar/>
+            <ControllerBlock/>
+        </OuterWrapper>
     )
 }
+
+const OuterWrapper = styled.div`
+    display: flex;
+    height: auto;
+    width: 100%;
+`
 
 export default InputDashboard;

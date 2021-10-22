@@ -20,7 +20,7 @@ export const loginUser = (login, password, path) => {
 export const logoutUser = (path) => {
     if(isLogged) {
         localStorage.removeItem('userToken');
-        window.location.href = path
+        window.location.href = path || '/'
     } return;
 }
 
