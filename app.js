@@ -7,6 +7,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
+app.use((err, req, res, next) => {
+    res.locals.error = err;
+    const status = err.status || 500;
+    res.status(status);
+  });
+
 const fetchDataRoutes = require('./routes/fetchData');
 app.use('/fetchData', fetchDataRoutes)
 

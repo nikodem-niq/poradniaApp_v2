@@ -1,15 +1,15 @@
 import axios from "axios";
 
-export const postInstitution = () => {
+export const postInstitution = (data) => {
     axios({
         method: 'post',
-        url: '#',
+        url: '/postData/institution-add',
         headers: {
             'Content-Type': 'application/json'
         },
-        data: { }
+        data : data
     }).then(res => {
-        console.log(res.data);
+        console.log(res);
     }).catch(err => {
         console.log(err.response.data)
     });
