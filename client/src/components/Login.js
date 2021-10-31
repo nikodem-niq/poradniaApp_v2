@@ -23,7 +23,7 @@ const Login = () => {
 
     const handleSubmit = e => {
         e.preventDefault();
-        loginUser(login, password, '/input-dashboard');         // Login - Password - Path to redirect
+        loginUser(login, password, '/dashboard');         // Login - Password - Path to redirect
     }
 
     return (

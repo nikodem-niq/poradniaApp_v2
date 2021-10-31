@@ -1,1 +1,11 @@
-POOL / CLIENT - many requests at the same time
+checkbox uczniowie roznych klas -> zapis do db + odczyt
+
+więcej niz 1 nauczyciel na dodawaniu programu: 
+    join do tabeli i wyslanie stringa do db
+
+bug fix -> po wejsciu po dluzszym czasie / reset aplikacji, token nie laduje sie i nie wyswietla wynikow tabeli
+
+zaawansowane wyszukiwanie
+sortowanie wszystkiego 
+
+testy!!@@#!@#!@#

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pg = require('pg');
+const { verifyToken } = require('../middlewares/auth');
 require('dotenv').config();
 
 const pool = new pg.Pool({
@@ -10,7 +11,7 @@ const pool = new pg.Pool({
   }
 });
 
-router.post('/institution-add', (req,res,next) => {
+router.post('/institution-add', verifyToken, (req,res,next) => {
   const { nameOfInstitution, email, city, community, postalCode, address, telephone, fax } = req.body;
   if(!(nameOfInstitution && email && city && community && postalCode && address && telephone && fax)) {
     res.status(403).json({message: "Invalid parameters"});
@@ -20,6 +21,70 @@ router.post('/institution-add', (req,res,next) => {
       '${telephone}', '${fax}')`, (err, response) => {
         client.release();
         res.status(200).json(response.rowCount);
+      });
+    })
+  }
+})
+
+router.post('/employee-add', verifyToken, (req,res,next) => {
+  const { firstName, secondName, lastName, age } = req.body;
+  if(!(firstName && lastName && age)) {
+    res.status(403).json({message: "Invalid parameters"});
+  } else {    
+    pool.connect().then(client => {
+      const query = `INSERT INTO employee("firstName", "secondName", "lastName", age) VALUES('${firstName}', '${secondName}', '${lastName}', ${age})`
+
+      client.query(query, (err, response) => {
+        client.release();
+        if(err) {
+          console.log(err);
+          res.json(err);
+        } else {
+          res.status(200).json(response);
+        }
+      });
+    })
+  }
+})
+
+router.post('/program-add', verifyToken, (req,res,next) => {
+  const { name, isLocal, forWho } = req.body;
+  if(!(name)) {
+    res.status(403).json({message: "Invalid parameters"});
+  } else {    
+    pool.connect().then(client => {
+      const query = `INSERT INTO programs(name, "isLocal", "forWho") VALUES('${name}', ${isLocal}, ${forWho})`
+
+      client.query(query, (err, response) => {
+        client.release();
+        if(err) {
+          console.log(err);
+          res.json(err);
+        } else {
+          res.status(200).json(response);
+        }
+      });
+    })
+  }
+})
+
+router.post('/event-add', verifyToken, (req,res,next) => {
+  const { dateOfEvent, employeeId, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
+  console.log(typeof dateOfEvent)
+  if(!(dateOfEvent)) {
+    res.status(403).json({message: "Invalid parameters"});
+  } else {    
+    pool.connect().then(client => {
+      const query = `INSERT INTO "programEvent"("dateOfEvent", "employeeId", "institutionId", "programId", "typeOfProgram", "howManyParticipiants", "howManyPrograms", "differentNameProgram") VALUES('${dateOfEvent}', ${employeeId}, ${institutionId}, ${programId}, '${typeOfProgram}', ${howManyParticipiants}, ${howManyPrograms}, '${differentNameProgram}')`
+
+      client.query(query, (err, response) => {
+        client.release();
+        if(err) {
+          console.log(err);
+          res.json(err);
+        } else {
+          res.status(200).json(response);
+        }
       });
     })
   }

@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import ControllerBlock from "../components/ControllerBlock";
 import Navbar from "../components/Navbar";
+import { OuterWrapper } from "../components/OuterWrapper";
 
-const InputDashboard = () => {
+const Dashboard = () => {
     return (
         <OuterWrapper>
             <Navbar/>
@@ -11,10 +12,5 @@ const InputDashboard = () => {
     )
 }
 
-const OuterWrapper = styled.div`
-    display: flex;
-    height: auto;
-    width: 100%;
-`
 
-export default InputDashboard;
+export default Dashboard;

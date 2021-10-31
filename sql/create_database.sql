@@ -42,7 +42,7 @@ CREATE TABLE "programs" (
 
 CREATE TABLE "programEvent" (
 	"idEvent" serial NOT NULL,
-	"dateOfEvent" DATE NOT NULL,
+	"dateOfEvent" varchar(50) NOT NULL,
 	"employeeId" int NOT NULL,
 	"institutionId" int NOT NULL,
 	"programId" int NOT NULL,
@@ -55,6 +55,15 @@ CREATE TABLE "programEvent" (
   OIDS=FALSE
 );
 
+CREATE TABLE "users" (
+	"id" serial NOT NULL,
+	"login" varchar(100) NOT NULL,
+	"password" varchar(100) NOT NULL,
+	"dateCreated" timestamp NOT NULL,
+	CONSTRAINT "users_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
 
 
 

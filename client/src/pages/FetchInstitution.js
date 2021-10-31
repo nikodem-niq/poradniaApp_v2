@@ -1,9 +1,41 @@
-import React, { useState } from "react";
+import { useCallback, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useState } from "react/cjs/react.development";
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
+import { OuterWrapper } from "../components/OuterWrapper";
+import TableData from "../components/TableData";
+import { fetchData } from "../middlewares/fetchData";
 import { postData } from "../middlewares/postData";
 
+
+
+const FetchInstitution = () => {
+    const [institutionData, setInstitutionData] = useState([]);
+    const [isAscending, setDescending] = useState(false)
+
+    useEffect(() => {
+        fetchData('/fetchData/institution-get').then(response => {
+            setInstitutionData(response.data.rows)
+        }).catch(err => {
+            console.log(err);
+        })
+    }, [])
+
+    const handleStateChange = useCallback(state => {
+        setInstitutionData(state);
+    }, [institutionData])
+
+    return (
+        <OuterWrapper>
+            <Navbar/>
+            <InnerWrapper>
+                <AddInstitution/>
+                <TableData whichTable="institution" data={institutionData} handleSort={[handleStateChange, isAscending, setDescending]}/>
+            </InnerWrapper>
+        </OuterWrapper>
+    )
+}
 
 const AddInstitution = props => {
 
@@ -47,13 +79,18 @@ const AddInstitution = props => {
                 console.log('bad selector - handle change');
                 break;
         }
-        // console.log({nameOfInstitution,email,city,postalCode,address,telephone,fax})
+    }
+
+    let isFormValid = () =>{
+        let isValid = nameOfInstitution != '' && email != '' && city != '' && postalCode  != '' && community != '' && address != '' && telephone != '' && fax != '' 
+        return isValid ? '' : 'disabled';
+
     }
 
     return(
         <OuterWrapper>
             <Navbar/>
-            <InnerWrapper>
+            <InnerWrapperTwo>
                 <Form>
                     <h1>Formularz dodania nowej placówki</h1>
                     <input type="text" onChange={handleChange} name="nameOfInstitution" id="nameOfInstitution" placeholder="Nazwa placówki.."/>
@@ -66,21 +103,24 @@ const AddInstitution = props => {
                     <input type="text" onChange={handleChange} name="address" id="address" placeholder="Adres placówki.."/>
                     <input type="text" onChange={handleChange} name="telephone" id="telephone" placeholder="Telefon placówki.."/>
                     <input type="text" onChange={handleChange} name="fax" id="fax" placeholder="FAX placówki.."/>
-                    <AddButton to="#" onClick={() => {postData("/postData/institution-add",{nameOfInstitution, email, city, postalCode, community, address, telephone, fax})}}>Dodaj</AddButton>
-                    
+                    <AddButton to="#" onClick={() => {postData("/postData/institution-add",{nameOfInstitution, email, city, postalCode, community, address, telephone, fax})}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    {isFormValid() &&
+                        <p>Wprowadz wszystkie wymagane dane!</p>
+                    }
                 </Form>
-            </InnerWrapper>
+            </InnerWrapperTwo>
         </OuterWrapper>
     )
 }
 
-const OuterWrapper = styled.div`
+const InnerWrapper = styled.div`
     display: flex;
-    height: auto;
+    flex-direction: column;
     width: 100%;
+    height: auto;
 `
 
-const InnerWrapper = styled.div`
+const InnerWrapperTwo = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
@@ -145,4 +185,4 @@ const Form = styled.form`
 `
 
 
-export default AddInstitution;
+export default FetchInstitution;

@@ -7,13 +7,29 @@ const ControllerBlock = props => {
             <Block>
                 Placówki
                 <ButtonWrapper>
-                    <DataButton to="/institution-add">Dodaj</DataButton>
-                    <DataButton to="/institution-get">Dane</DataButton>
+                    <DataButton to="/institution">Dane</DataButton>
                 </ButtonWrapper>
             </Block>
-            <Block>Pracownicy</Block>
-            <Block>Programy</Block>
-            <Block>Wydarzenia (wyjazd terenowy)</Block>
+            <Block>Pracownicy
+                <ButtonWrapper>
+                    <DataButton to="/employee">Dane</DataButton>
+                </ButtonWrapper>
+            </Block>
+            <Block>Programy
+                <ButtonWrapper>
+                    <DataButton to="/programs">Dane</DataButton>
+                </ButtonWrapper>
+            </Block>
+            <Block>Wydarzenia (wyjazd terenowy)
+                <ButtonWrapper>
+                    <DataButton to="/events">Dane</DataButton>
+                </ButtonWrapper>
+            </Block>
+            <Block>Zaawansowane wyszukiwanie
+                <ButtonWrapper>
+                    <DataButton to="/search">Wyszukiwanie</DataButton>
+                </ButtonWrapper>
+            </Block>
         </OuterWrapper>
     )
 }
@@ -22,7 +38,7 @@ const OuterWrapper = styled.div`
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 `
 
@@ -36,17 +52,18 @@ const Block = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    box-shadow: black 0.06rem 0.06rem 0.2rem;
 `
-const DataButton = styled(Link)`
+export const DataButton = styled(Link)`
     background-color: black;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
-    width: 3vw;
-    height: 1.2rem;
-    padding: 0.8rem;
-    font-size: 10px;
+    width: ${props => props.width ? props.width : '5rem'};
+    height: ${props => props.height ? props.height : '1.5rem'};
+    padding: 1rem;
+    font-size: ${props => props.fontSize ? props.fontSize : '1rem'};
     border: none;
     border-radius: 10px;
 `
