@@ -25,4 +25,8 @@ app.use('/updateData', updateDataRoutes)
 const userRoutes = require('./routes/userRoutes');
 app.use('/user', userRoutes)
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+});
+
 module.exports = app;

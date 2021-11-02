@@ -43,17 +43,17 @@ router.get('/institution-get', verifyToken, (req,res,next) => {
 
 router.get('/employee-get', verifyToken, (req,res,next) => {
   pool.connect().then(client => {
-    if(req.query.id) {
-      client.query(`SELECT * FROM employee WHERE "idEmployee" = '${req.query.id}'`, (err,response) => {
+    const { column, order, limit } = req.query;
+    if(column || order || limit) {
+      let query = `SELECT * FROM employee ORDER BY "${column}" ${order || 'ASC'} LIMIT ${limit || 'ALL'}`;
+      client.query(query).then(response => {
+        res.status(200).send(response);
         client.release();
-        if(err) {
-          console.log(err)
-          res.status(403).json(err)
-        } else {
-          res.status(200).json(response);
-        }
-      })      
+      }).catch(err => {
+        console.log(err);
+      })
     } else {
+      // Fetch all  
       const query = `SELECT * FROM employee;`
   
       client.query(query, (err,response) => {

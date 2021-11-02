@@ -5,6 +5,7 @@ export const removeItem = (id, item) => {
         case 'institution':
             axios.delete(`/updateData/removeInstitution?id=${id}`, { headers : { 'x-access-token' : localStorage.getItem('userToken')}}).then(res => {
                 console.log(res);
+                window.location.reload();
             }).catch(err => {
                 console.log(err);
             })
@@ -12,6 +13,7 @@ export const removeItem = (id, item) => {
         case 'employee':
             axios.delete(`/updateData/removeEmployee?id=${id}`, { headers : { 'x-access-token' : localStorage.getItem('userToken')}}).then(res => {
                 console.log(res);
+                window.location.reload();
             }).catch(err => {
                 console.log(err);
             })
@@ -19,6 +21,7 @@ export const removeItem = (id, item) => {
         case 'programs':
             axios.delete(`/updateData/removeProgram?id=${id}`, { headers : { 'x-access-token' : localStorage.getItem('userToken')}}).then(res => {
                 console.log(res);
+                window.location.reload();
             }).catch(err => {
                 console.log(err);
             })
@@ -26,6 +29,7 @@ export const removeItem = (id, item) => {
         case 'event':
             axios.delete(`/updateData/removeEvent?id=${id}`, { headers : { 'x-access-token' : localStorage.getItem('userToken')}}).then(res => {
                 console.log(res);
+                window.location.reload();
             }).catch(err => {
                 console.log(err);
             })

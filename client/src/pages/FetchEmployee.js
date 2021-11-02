@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useState } from "react/cjs/react.development";
 import styled from "styled-components";
@@ -12,6 +12,7 @@ import { postData } from "../middlewares/postData";
 
 const FetchEmployee = () => {
     const [employeeData, setEmployeeData] = useState([]);
+    const [isAscending, setDescending] = useState(false);
 
     useEffect(() => {
         fetchData('/fetchData/employee-get').then(response => {
@@ -21,13 +22,16 @@ const FetchEmployee = () => {
         })
     }, [])
 
+    const handleStateChange = useCallback (state => {
+        setEmployeeData(state);
+    }, [employeeData]);
 
     return (
         <OuterWrapper>
             <Navbar/>
             <InnerWrapper>
                 <AddEmployee/>
-                <TableData whichTable="employee" data={employeeData}/>
+                <TableData whichTable="employee" data={employeeData} handleSort={[handleStateChange, isAscending, setDescending]}/>
             </InnerWrapper>
         </OuterWrapper>
     )

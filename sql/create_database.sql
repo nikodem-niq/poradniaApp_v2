@@ -33,6 +33,7 @@ CREATE TABLE "programs" (
 	"name" varchar(255) NOT NULL,
 	"isLocal" BOOLEAN NOT NULL,
 	"forWho" int NOT NULL,
+	"classes" TEXT NULL,
 	CONSTRAINT "programs_pk" PRIMARY KEY ("idProgram")
 ) WITH (
   OIDS=FALSE
@@ -43,7 +44,8 @@ CREATE TABLE "programs" (
 CREATE TABLE "programEvent" (
 	"idEvent" serial NOT NULL,
 	"dateOfEvent" varchar(50) NOT NULL,
-	"employeeId" int NOT NULL,
+	-- "employeeId" int NOT NULL,
+	"employees" TEXT NOT NULL,
 	"institutionId" int NOT NULL,
 	"programId" int NOT NULL,
 	"typeOfProgram" TEXT,
@@ -69,7 +71,7 @@ CREATE TABLE "users" (
 
 
 
-ALTER TABLE "programEvent" ADD CONSTRAINT "programEvent_fk0" FOREIGN KEY ("employeeId") REFERENCES "employee"("idEmployee");
+-- ALTER TABLE "programEvent" ADD CONSTRAINT "programEvent_fk0" FOREIGN KEY ("employeeId") REFERENCES "employee"("idEmployee");
 ALTER TABLE "programEvent" ADD CONSTRAINT "programEvent_fk1" FOREIGN KEY ("institutionId") REFERENCES "institution"("idInstitution");
 ALTER TABLE "programEvent" ADD CONSTRAINT "programEvent_fk2" FOREIGN KEY ("programId") REFERENCES "programs"("idProgram");
 

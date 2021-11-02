@@ -9,11 +9,12 @@ import TableData from "../components/TableData";
 import { fetchData } from "../middlewares/fetchData";
 import { postData } from "../middlewares/postData";
 
+const employeesNames = [];
 
 const FetchEvents = () => {
     // Posting
     const [dateOfEvent, setDateOfEvent] = useState("");
-    const [employeeId, setEmployeeId] = useState(0);
+    const [employees, setEmployee] = useState("");
     const [institutionId, setInstitutionId] = useState("");
     const [programId, setProgramId] = useState("");
     const [typeOfProgram, setTypeOfProgram] = useState("");
@@ -23,10 +24,13 @@ const FetchEvents = () => {
 
     const [employeeCount, setEmployeeCount] = useState(0);
 
+
+
     const handleChange = (event) => {
         if(event.target.name == 'employeeId') {
-            setEmployeeId(event.target.selectedOptions[0].getAttribute('data-id'));
-            console.log(event.target.value)
+            employeesNames.push(event.target.value);
+            const uniqueNames = Array.from(new Set(employeesNames)).join(', ');
+            setEmployee(uniqueNames);
         } else if(event.target.name == 'dateOfEvent') {
             setDateOfEvent(event.target.value.toString())
         } else if(event.target.name == 'institutionId') {
@@ -80,7 +84,7 @@ const FetchEvents = () => {
     }, [])
 
     const isFormValid = () =>{
-        let isValid = dateOfEvent !== '' && employeeId !== '' && institutionId !== '' && programId !== '' && typeOfProgram !== '' && howManyParticipiants !== '' && howManyPrograms  !== '' && differentNameProgram !== ''; 
+        let isValid = dateOfEvent !== '' && employees !== '' && institutionId !== '' && programId !== '' && typeOfProgram !== '' && howManyParticipiants !== '' && howManyPrograms  !== '' && differentNameProgram !== ''; 
         return isValid ? '' : 'disabled';
 
     }
@@ -96,12 +100,6 @@ const FetchEvents = () => {
                     <input type="date" onChange={handleChange} name="dateOfEvent" id="dateOfEvent" placeholder="Data wizyty.."/>
                     <input type="text" onChange={handleChange} name="quantityOfWorkers" id="quantityOfWorkers" placeholder="Ilu pracownikow w wydarzeniu?"/>
 
-                    {/* <select name="employeeId" id="employeeId" onChange={handleChange}>
-                        <option>-- Wybierz pracownika --</option>
-                        {employeeData.map((el) => {
-                            return <SelectItem key={el.idEmployee} id={el.idEmployee} name={el.firstName} lastName={el.lastName}/>
-                        })}
-                    </select> */}
                     {[...Array(parseInt(employeeCount))].map((v,i) => {
                         return <SelectEmployee i={i} employeeData={employeeData} handleChange={handleChange}/>
                     })}
@@ -122,7 +120,7 @@ const FetchEvents = () => {
                     <input type="number" onChange={handleChange} name="howManyPrograms" id="howManyPrograms" placeholder="Ile form pomocy.."/>
                     <input type="text" onChange={handleChange} name="differentNameProgram" id="differentNameProgram" placeholder="Inna nazwa programu.."/>
 
-                    <AddButton to="#" onClick={() => {postData("/postData/event-add",{dateOfEvent, employeeId, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram})}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => { postData("/postData/event-add",{dateOfEvent, employees, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram})}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }
@@ -155,65 +153,6 @@ const InnerWrapper = styled.div`
     flex-direction: column;
     width: 100%;
     height: auto;
-`
-
-const TableWrapper = styled.table`
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    display: flex;
-    font-family: Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    table-layout: fixed;
-
-    td, th {
-        border: 1px solid #ddd;
-        padding-top: 8px;
-        padding-bottom: 8px;
-    }
-
-    td {
-        width: 100%;
-        font-size: 0.8rem;
-    }
-
-    tr:nth-child(even){
-        background-color: #dcdde1;
-    }
-
-    tr:nth-child(even) td {
-        border-left: solid 1px #f5f6fa;
-        border-right: solid 1px #f5f6fa;
-    }
-
-    th:first-child:hover{
-        background-color: red;
-    }
-
-    tr:hover {
-        background-color: #487eb0;
-    }
-
-    th {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        text-align: left;
-        font-size: 0.8rem;
-        background-color: #04AA6D;
-        color: white;
-        width: 100%;
-        height: 70%;
-    }
-
-    tr {
-        width: 95%;
-        display: flex;
-        margin: 0.2rem 0;
-        justify-content: center;
-        align-items: center;
-        background: #f5f6fa;
-    }
 `
 
 const AddButton = styled(Link)`

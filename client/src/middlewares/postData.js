@@ -11,8 +11,8 @@ export const postData = (url, data) => {
         data
     }).then(res => {
         console.log(res);
+        window.location.reload();
     }).catch(err => {
         console.log(err.response.data)
     });
-    console.log(data)
 }

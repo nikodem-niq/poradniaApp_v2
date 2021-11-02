@@ -48,12 +48,12 @@ router.post('/employee-add', verifyToken, (req,res,next) => {
 })
 
 router.post('/program-add', verifyToken, (req,res,next) => {
-  const { name, isLocal, forWho } = req.body;
+  const { name, isLocal, forWho, classes } = req.body;
   if(!(name)) {
     res.status(403).json({message: "Invalid parameters"});
   } else {    
     pool.connect().then(client => {
-      const query = `INSERT INTO programs(name, "isLocal", "forWho") VALUES('${name}', ${isLocal}, ${forWho})`
+      const query = `INSERT INTO programs(name, "isLocal", "forWho", "classes") VALUES('${name}', ${isLocal}, ${forWho}, '${classes}')`
 
       client.query(query, (err, response) => {
         client.release();
@@ -69,13 +69,12 @@ router.post('/program-add', verifyToken, (req,res,next) => {
 })
 
 router.post('/event-add', verifyToken, (req,res,next) => {
-  const { dateOfEvent, employeeId, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
-  console.log(typeof dateOfEvent)
+  const { dateOfEvent, employees, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
   if(!(dateOfEvent)) {
     res.status(403).json({message: "Invalid parameters"});
   } else {    
     pool.connect().then(client => {
-      const query = `INSERT INTO "programEvent"("dateOfEvent", "employeeId", "institutionId", "programId", "typeOfProgram", "howManyParticipiants", "howManyPrograms", "differentNameProgram") VALUES('${dateOfEvent}', ${employeeId}, ${institutionId}, ${programId}, '${typeOfProgram}', ${howManyParticipiants}, ${howManyPrograms}, '${differentNameProgram}')`
+      const query = `INSERT INTO "programEvent"("dateOfEvent", "employees", "institutionId", "programId", "typeOfProgram", "howManyParticipiants", "howManyPrograms", "differentNameProgram") VALUES('${dateOfEvent}', '${employees}', ${institutionId}, ${programId}, '${typeOfProgram}', ${howManyParticipiants}, ${howManyPrograms}, '${differentNameProgram}')`
 
       client.query(query, (err, response) => {
         client.release();

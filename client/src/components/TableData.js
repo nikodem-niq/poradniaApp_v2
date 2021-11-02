@@ -2,16 +2,44 @@ import styled from "styled-components"
 import { removeItem } from "../middlewares/updateData"
 import { DataButton } from "./ControllerBlock"
 import sort from '../img/sort2.png';
-import { institutionSorting } from "../middlewares/sorting";
+import { institutionSorting, employeeSorting } from "../middlewares/sorting";
 import { useState } from "react/cjs/react.development";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 
 
-const defineForWho = data => {
+const defineForWho = (data,classes) => {
     switch(data) {
         case 0:
-            return 'uczniowie'
+            if(classes) {
+                let classList = [];
+                let splittedClass = classes.split(',');
+                for(let i=0; i<13; i++) {
+                    if(splittedClass[i] === true || splittedClass[i] === 'true') {
+                        switch(i) {
+                            case 8:
+                                classList.push('1 L/T');
+                                break;
+                            case 9:
+                                classList.push('2 L/T');
+                                break;
+                            case 10:
+                                classList.push('3 L/T');
+                                break;
+                            case 11:
+                                classList.push('4 L/T');
+                                break;
+                            case 12:
+                                classList.push('5 T');
+                                break;
+                            default:
+                                classList.push(`${i+1} pods.`);
+                                break;
+                        }
+                    }
+                }
+                return `uczniowie (klasy: ${classList})`
+            }
         case 1:
             return 'rodzice'
         case 2:
@@ -27,9 +55,8 @@ const TableData = (props) => {
     useEffect(() => {
         setData(props.data)
         setLoading(false);
-        // console.log(props.data, data)
     }, [props.data])
-    // console.log(idSorting)
+
     switch(props.whichTable) {
         case 'institution':
             return (
@@ -41,7 +68,6 @@ const TableData = (props) => {
                             <img src={sort} onClick={() => {
                                 setLoading(true);
                                 setIdSorting(true);
-                                console.log(idSorting)
                                 institutionSorting('idInstitution', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
                             }} />
@@ -124,16 +150,48 @@ const TableData = (props) => {
                 <TableWrapper>
                     <h1>Zestawienie danych</h1>
                     <tr>
-                        <th>Lp.</th>
-                        <th>Imię</th>
-                        <th>Drugie imię</th>
-                        <th>Nazwisko</th>
-                        <th>Wiek</th>
+                        <th><p>Lp.</p>
+                        <img src={sort} onClick={() => {
+                                setLoading(true);
+                                setIdSorting(true);
+                                console.log(data)
+                                employeeSorting('idEmployee', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
+                                console.log(data)
+                                setLoading(false);
+                            }} />
+                        </th>
+                        <th><p>Imię</p>
+                        <img src={sort} onClick={() => {
+                                setLoading(true);
+                                employeeSorting('firstName', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
+                                setLoading(false);
+                            }} />
+                        </th>
+                        <th><p>Drugie imię</p>
+                        <img src={sort} onClick={() => {
+                                setLoading(true);
+                                employeeSorting('secondName', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
+                                setLoading(false);
+                            }} />
+                        </th>
+                        <th><p>Nazwisko</p>
+                        <img src={sort} onClick={() => {
+                                setLoading(true);
+                                employeeSorting('lastName', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
+                                setLoading(false);
+                            }} />
+                        </th>
+                        <th><p>Wiek</p>
+                        <img src={sort} onClick={() => {
+                                setLoading(true);
+                                employeeSorting('age', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
+                                setLoading(false);
+                            }} />
+                        </th>
                         <th>Akcje</th>
-
                     </tr>
                     {props.data.map((el, i) => {
-                        return <TableItem iterator={i+1} whichTable="employee" id={el.idEmployee} name={el.firstName} secondName={el.secondName} lastName={el.lastName} age={el.age}/>
+                        return <TableItem iterator={(!props.handleSort[1] || !idSorting ? i+1 : data.length-i)} whichTable="employee" id={el.idEmployee} name={el.firstName} secondName={el.secondName} lastName={el.lastName} age={el.age}/>
                     })}
                 </TableWrapper>
             )
@@ -149,8 +207,8 @@ const TableData = (props) => {
                         <th>Akcje</th>
 
                     </tr>
-                    {props.data.map((el,i) => {
-                        return <TableItem iterator={i+1} whichTable="programs" id={el.idProgram} name={el.name} isLocal={el.isLocal} forWho={el.forWho}/>
+                    {!data && !isLoading ? 'loading' : props.data.map((el,i) => {
+                        return <TableItem iterator={i+1} whichTable="programs" id={el.idProgram} name={el.name} isLocal={el.isLocal} forWho={el.forWho} classes={el.classes}/>
                     })}
                 </TableWrapper>
             )
@@ -175,9 +233,9 @@ const TableData = (props) => {
     
                 </tr>
                 {props.eventData.map((el,i) => {
-                const findUser = props.employeeData.filter(element => {
-                    return element.idEmployee == el.employeeId;
-                })[0]
+                // const findUser = props.employeeData.filter(element => {
+                //     return element.idEmployee == el.employeeId;
+                // })[0]
 
                 const findInstitution = props.institutionData.filter(element => {
                     return element.idInstitution == el.institutionId;
@@ -191,7 +249,9 @@ const TableData = (props) => {
                     return <tr>
                         <td>{i+1}</td>
                         <td>{el.dateOfEvent}</td>
-                        <td>{findUser.firstName} {findUser.lastName}</td>
+                        {/* <td>{findUser.firstName} {findUser.lastName}</td> */}
+                        {/* {console.log(el.employees)} */}
+                        <td>{el.employees}</td>
                         <td>{findInstitution.name}</td>
                         <td>{findInstitution.community}</td>
                         <td>{findProgram.name}</td>
@@ -199,7 +259,7 @@ const TableData = (props) => {
                         <td>{el.howManyParticipiants}</td>
                         <td>{el.howManyPrograms}</td>
                         <td>{el.differentNameProgram}</td>
-                        <td>{defineForWho(findProgram.forWho)}</td>
+                        <td>{defineForWho(findProgram.forWho, findProgram.classes)}</td>
                         <td style={{display: "flex", justifyContent: "space-evenly"}}>
                         {/* <DataButton width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Edytuj</DataButton> */}
                         <DataButton onClick={() => {removeItem(el.idEvent, 'event')}} width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Usuń</DataButton>
@@ -257,7 +317,7 @@ const TableItem = props => {
                     <td>{props.iterator}</td>
                     <td>{props.name}</td>
                     <td>{props.isLocal ? "lokalnie" : "teren"}</td>
-                    <td>{defineForWho(props.forWho)}</td>
+                    <td>{defineForWho(props.forWho, props.classes)}</td>
                     <td style={{display: "flex", justifyContent: "space-evenly"}}>
                         {/* <DataButton width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Edytuj</DataButton> */}
                         <DataButton onClick={() => {removeItem(props.id, 'programs')}} width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Usuń</DataButton>
