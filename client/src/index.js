@@ -19,6 +19,7 @@ const App = () => {
         <Switch>
           <Auth component={Login} path="/login"/>
           <PrivateRoute component={Dashboard} path="/dashboard"/>
+          <PrivateRoute component={Dashboard} exact path="/"/>
 
           <PrivateRoute component={FetchInstitution} path="/institution"/>
           <PrivateRoute component={FetchEmployee} path="/employee"/>
