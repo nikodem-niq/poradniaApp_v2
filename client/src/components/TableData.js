@@ -3,8 +3,7 @@ import { removeItem } from "../middlewares/updateData"
 import { DataButton } from "./ControllerBlock"
 import sort from '../img/sort2.png';
 import { institutionSorting, employeeSorting } from "../middlewares/sorting";
-import { useState } from "react/cjs/react.development";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 
