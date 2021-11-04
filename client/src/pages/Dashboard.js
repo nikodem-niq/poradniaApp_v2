@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import ControllerBlock from "../components/ControllerBlock";
 import Navbar from "../components/Navbar";
 import { OuterWrapper } from "../components/OuterWrapper";

@@ -6,6 +6,7 @@ const Login = () => {
 
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
+    const [loginError, setLoginError] = useState(false);
 
     const handleChange = e => {
         switch(e.target.name) {
@@ -21,15 +22,21 @@ const Login = () => {
 
     }
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
-        loginUser(login, password, '/dashboard');         // Login - Password - Path to redirect
+        const loggedIn = await loginUser(login, password);
+        if(loggedIn) {
+            window.location.reload();
+        } else {
+            setLoginError(true);
+        }
     }
 
     return (
     <OuterWrapper>
         <h1>PPP Wodzisław Śląski</h1>
         <h2>Badania terenowe</h2>
+
         <input type="text" name="login" id="login" onChange={handleChange} placeholder="Wpisz swój login.."/>
         <input type="password" name="password" id="password" onChange={handleChange} placeholder="Wpisz swoje hasło.."/>
         <input type="submit" name="submit" id="submit" onClick={handleSubmit} value="Zaloguj się"/>

@@ -60,7 +60,7 @@ router.post('/auth', (req,res,next) => {
                     bcrypt.compare(password, encryptedPassword, (err, same) => {
                         if(same) {
                             client.release();
-                            const token = jwt.sign({ login }, process.env.SECRET_JWT, { expiresIn: '6h' });
+                            const token = jwt.sign({ login }, process.env.SECRET_JWT, { expiresIn: '3h' });
                             res.status(200).send({msg : `user ${login} logged in`, token})
                         } else {
                             client.release();
