@@ -36,12 +36,24 @@ const Login = () => {
     <OuterWrapper>
         <h1>PPP Wodzisław Śląski</h1>
         <h2>Badania terenowe</h2>
-
+        {loginError ? <ErrorHandler>Niepoprawny login/hasło!</ErrorHandler> : ''}
         <input type="text" name="login" id="login" onChange={handleChange} placeholder="Wpisz swój login.."/>
         <input type="password" name="password" id="password" onChange={handleChange} placeholder="Wpisz swoje hasło.."/>
         <input type="submit" name="submit" id="submit" onClick={handleSubmit} value="Zaloguj się"/>
     </OuterWrapper>
 )}
+
+const ErrorHandler = styled.div`
+    width: 12rem;
+    height: 1rem;
+    padding: 1rem;
+    display: flex;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    background-color: #e74c3c;
+    color: white;
+`
 
 const OuterWrapper = styled.form`
     height: 100vh;

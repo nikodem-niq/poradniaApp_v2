@@ -1,7 +1,10 @@
-bug fix -> po wejsciu po dluzszym czasie / reset aplikacji, token nie laduje sie i nie wyswietla wynikow tabeli
-
-zaawansowane wyszukiwanie (1/2 done)
+zaawansowane wyszukiwanie (2/3 done) PRAWIE SKONCZONE
 sortowanie wszystkiego (1/2 done)
+
+bugfixy:
+    - client release error sometimes po wyslaniu requesta
+
+dodac klasy do wyszukiwania
 
 download to pdf/csv/json
 

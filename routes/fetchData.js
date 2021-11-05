@@ -101,21 +101,4 @@ router.get('/events-get', verifyToken, (req,res,next) => {
   })
 })
 
-router.get('/institution-get-special', verifyToken, (req,res,next) => {
-  pool.connect().then(client => {
-    const { idToFind } = req.query;
-    const query = `SELECT name FROM institution WHERE "idInstitution" = ${idToFind};`
-
-    client.query(query, (err,response) => {
-      client.release();
-      if(err) {
-        console.log(err)
-        res.status(403).json(err)
-      } else {
-        res.status(200).json(response);
-      }
-    })
-  })
-})
-
 module.exports = router;

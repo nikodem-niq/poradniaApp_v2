@@ -10,7 +10,6 @@ import { postData } from "../middlewares/postData";
 
 const SearchPage = () => {
 
-
     // Fetching
     const [eventData, setEventData] = useState([]);
     const [institutionData, setInstitutionData] = useState([]);
@@ -37,8 +36,6 @@ const SearchPage = () => {
 
     }, [])
 
-
-
     // Searching
     // Form states
     const [firstDate, setFirstDate] = useState('');
@@ -54,7 +51,8 @@ const SearchPage = () => {
     const [differentNameProgram, setDifferentNameProgram] = useState('');
     
     const handleChange = event => {
-        const { name,value, selectedOptions } = event.target;
+        event.preventDefault();
+        const { name,value } = event.target;
         if(name == 'firstDate') {
             setFirstDate(value);
         } else if(name == 'secondDate') {
@@ -63,10 +61,26 @@ const SearchPage = () => {
             setEmployees(value);
         } else if(name == 'nameOfInstitution') {
             setNameOfInstitution(value);
+        } else if(name == 'nameOfProgram') {
+            setNameOfProgram(value);
+        } else if(name == 'typeOfProgram') {
+            setTypeOfProgram(value);
+        } else if(name == 'firstParticipiants') {
+            setFirstParticipiants(value);
+        } else if(name == 'secondParticipiants') {
+            setSecondParticipiants(value);
+        } else if(name == 'firstPrograms') {
+            setFirstPrograms(value);
+        } else if(name == 'secondPrograms') {
+            setSecondPrograms(value);
+        } else if(name == 'differentNameProgram') {
+            setDifferentNameProgram(value);
         }
     }
 
-    // tu dokonczyc!!
+    const handleSearch = () => {
+        postData('/postData/search',{firstDate,secondDate,employees,nameOfInstitution,nameOfProgram,typeOfProgram,firstParticipiants,secondParticipiants,firstPrograms,secondPrograms,differentNameProgram}, setEventData);
+    }
 
 
     return (
@@ -74,7 +88,7 @@ const SearchPage = () => {
             <Navbar/>
             <InnerWrapper>
                 <Form>
-                    <label>Wyszukiwanie (jeśli pole nie jest wymagane ZOSTAW PUSTE!)</label>
+                    <label style={{marginTop: '1rem',}}>Wyszukiwanie <p style={{marginTop: '1rem', color: 'red'}}>(jeśli pole nie jest wymagane <b>ZOSTAW PUSTE!</b>)</p></label>
                     <FormItem what="dateOfEvent" handleChange={handleChange}/>
                     <FormItem what="employees" handleChange={handleChange}/>
                     <FormItem what="nameOfInstitution" handleChange={handleChange}/>
@@ -83,7 +97,7 @@ const SearchPage = () => {
                     <FormItem what="howManyParticipiants" handleChange={handleChange}/>
                     <FormItem what="howManyPrograms" handleChange={handleChange}/>
                     <FormItem what="differentNameProgram" handleChange={handleChange}/>
-                    <AddButton>Szukaj</AddButton>
+                    <AddButton to="#" onClick={handleSearch}>Szukaj</AddButton>
                 </Form>
                 <TableData whichTable="events" eventData={eventData} programsData={programsData} employeeData={employeeData} institutionData={institutionData}/>
             </InnerWrapper>
@@ -97,18 +111,18 @@ const FormItem = props => {
             return (
                 <div>
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Zakres dat </label> <br/>
+                    {/* <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Zakres dat </label> <br/> */}
                 </div>
                 <div style={{display: 'flex'}}>
                     <div style={{display: 'flex', flexDirection: 'column', ustifyContent: 'center', alignItems: 'center'}}>
-                        <label htmlFor="firstDate">
-                            Data początkowa
+                        <label htmlFor="firstDate" style={{marginTop: '5rem'}}>
+                            Zakres daty początkowy
                         </label>
                         <input onChange={props.handleChange} type="date" name="firstDate" id="firstDate" required />    
                     </div>
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                    <label htmlFor="secondDate">
-                        Data końcowa
+                    <label htmlFor="secondDate" style={{marginTop: '5rem'}}>
+                        Zakres daty końcowy
                     </label>
                     <input onChange={props.handleChange} type="date" name="secondDate" id="secondDate" required/>
                     </div>
