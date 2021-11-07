@@ -1,11 +1,6 @@
 zaawansowane wyszukiwanie (2/3 done) PRAWIE SKONCZONE
-sortowanie wszystkiego (1/2 done)
 
-bugfixy:
-    - client release error sometimes po wyslaniu requesta
 
-dodac klasy do wyszukiwania
-
-download to pdf/csv/json
+po odznaczeniu klasy/uzytkownika usuwa go z state
 
 testy!!@@#!@#!@#

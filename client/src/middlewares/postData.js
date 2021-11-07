@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const postData = (url, data, setter) => {
+export const postData = (url, data, setter, setReload) => {
     axios({
         method: 'post',
         url,
@@ -10,8 +10,8 @@ export const postData = (url, data, setter) => {
         },
         data
     }).then(res => {
-        if(!url === '/postData/search') {
-           window.location.reload();
+        if(setReload) {
+           setReload(true);
         } 
         if(setter) {
             setter(res.data);

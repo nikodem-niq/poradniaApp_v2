@@ -23,6 +23,9 @@ const FetchEvents = () => {
 
     const [employeeCount, setEmployeeCount] = useState(0);
 
+    const [ifReload, setReload] = useState(false);
+
+
 
 
     const handleChange = (event) => {
@@ -79,8 +82,8 @@ const FetchEvents = () => {
             })
           );
 
-
-    }, [])
+        setReload(false);
+    }, [ifReload])
 
     const isFormValid = () =>{
         let isValid = dateOfEvent !== '' && employees !== '' && institutionId !== '' && programId !== '' && typeOfProgram !== '' && howManyParticipiants !== '' && howManyPrograms  !== '' && differentNameProgram !== ''; 
@@ -119,7 +122,7 @@ const FetchEvents = () => {
                     <input type="number" onChange={handleChange} name="howManyPrograms" id="howManyPrograms" placeholder="Ile form pomocy.."/>
                     <input type="text" onChange={handleChange} name="differentNameProgram" id="differentNameProgram" placeholder="Inna nazwa programu.."/>
 
-                    <AddButton to="#" onClick={() => { postData("/postData/event-add",{dateOfEvent, employees, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram})}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => { postData("/postData/event-add",{dateOfEvent, employees, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram}, null, setReload)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }

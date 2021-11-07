@@ -15,6 +15,7 @@ const FetchPrograms = () => {
     const [isLocal, setIsLocal] = useState(false);
     const [forWho, setForWho] = useState(0);
     const [classes, setClasses] = useState([]);
+    const [ifReload, setReload] = useState(false);
 
     const [areCheckboxesVisible, setCheckboxesVisible] = useState(false);
 
@@ -45,18 +46,27 @@ const FetchPrograms = () => {
 
                 break;
             default:
-                console.log('bad selector - handle change');
                 break;
         }
     }
 
     const handleCheckBox = (event) => {
-        const { value, name, checked } = event.target;
+        const { value, checked } = event.target;
         if(checked) {
             classesArray[value] = true;
+        } else {
+            classesArray[value] = false;
         }
         setClasses(classesArray.join(','));
-        console.log(classes);
+    }
+
+    const handleReset = () => {
+        setClasses([]);
+        setName("");
+        setCheckboxesVisible(false);
+        setForWho(0)
+        setIsLocal(false)
+        document.querySelector('form').reset();
     }
 
     // Fetching
@@ -68,10 +78,10 @@ const FetchPrograms = () => {
         }).catch(err => {
             console.log(err);
         })
-    }, [name])
+    }, [name, ifReload])
 
     let isFormValid = () =>{
-        let isValid = name != ''; 
+        let isValid = name !== ''; 
         return isValid ? '' : 'disabled';
 
     }
@@ -163,7 +173,8 @@ const FetchPrograms = () => {
                     </div>
                     : ""}
 
-                    <AddButton to="#" onClick={() => {console.log(classes); postData("/postData/program-add",{name, isLocal, forWho, classes})}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => {postData("/postData/program-add",{name, isLocal, forWho, classes}, null, setReload)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton style={{margin: '1rem'}} to="#" onClick={() => {handleReset()}}>Resetuj</AddButton>
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }

@@ -12,14 +12,17 @@ import { postData } from "../middlewares/postData";
 const FetchEmployee = () => {
     const [employeeData, setEmployeeData] = useState([]);
     const [isAscending, setDescending] = useState(false);
+    const [ifReload, setReload] = useState(false);
+
 
     useEffect(() => {
         fetchData('/fetchData/employee-get').then(response => {
             setEmployeeData(response.data.rows)
+            setReload(false);
         }).catch(err => {
             console.log(err);
         })
-    }, [])
+    }, [ifReload])
 
     const handleStateChange = useCallback (state => {
         setEmployeeData(state);
@@ -29,7 +32,7 @@ const FetchEmployee = () => {
         <OuterWrapper>
             <Navbar/>
             <InnerWrapper>
-                <AddEmployee/>
+                <AddEmployee ifReloadData={setReload}/>
                 <TableData whichTable="employee" data={employeeData} handleSort={[handleStateChange, isAscending, setDescending]}/>
             </InnerWrapper>
         </OuterWrapper>
@@ -142,7 +145,7 @@ const AddEmployee = props => {
                     <input type="text" onChange={handleChange} name="secondName" id="secondName" placeholder="Drugie imię pracownika.."/>
                     <input type="text" onChange={handleChange} name="lastName" id="lastName" placeholder="Nazwisko.."/>
                     <input type="number" onChange={handleChange} name="age" id="age" placeholder="Wiek"/>
-                    <AddButton to="#" onClick={() => {postData("/postData/employee-add",{firstName, secondName, lastName, age})}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => {postData("/postData/employee-add",{firstName, secondName, lastName, age},null,props.ifReloadData)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }

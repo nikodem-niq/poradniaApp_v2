@@ -1,9 +1,8 @@
 import styled from "styled-components"
 import { removeItem } from "../middlewares/updateData"
-import { DataButton } from "./ControllerBlock"
-import sort from '../img/sort2.png';
-import { institutionSorting, employeeSorting } from "../middlewares/sorting";
-import { useEffect, useState } from "react";
+import { DataButton, DataDownloadButton } from "./ControllerBlock"
+import html2pdf from 'html2pdf.js';
+import React, { useEffect, useState } from "react";
 
 
 
@@ -47,8 +46,7 @@ const defineForWho = (data,classes) => {
     }
 
 const TableData = (props) => {
-    const [isLoading, setLoading] = useState(true);
-    const [idSorting, setIdSorting] = useState(true);
+    const [isLoading, setLoading] = useState(false);
     const [data, setData] = useState(props.data);
 
     useEffect(() => {
@@ -56,165 +54,220 @@ const TableData = (props) => {
         setLoading(false);
     }, [props.data])
 
+    const printData = (from) => {
+        const data = document.getElementById('tableWithData');
+        const actionsTableHeader = document.getElementById('actionsTableHeader');
+        const actionsTableHeaderItems = document.querySelectorAll('.actionRemoveData');
+            const opt = {
+                margin: 0,
+                filename: `dane_${from}.pdf`,
+                image: {type: 'png',quality: 0.98},
+                html2canvas: {scale: 1},
+                jsPDF: {
+                  unit: 'pt',
+                  format: [1500, 1500],
+                  orientation: 'landscape'
+                }
+            }
+            actionsTableHeader.style.display = 'none';
+            for(let i=0; i<actionsTableHeaderItems.length; i++) {
+                actionsTableHeaderItems[i].style.display = 'none';
+            }
+            setTimeout(() => {
+                actionsTableHeader.style.display = 'block';
+                for(let i=0; i<actionsTableHeaderItems.length; i++) {
+                    actionsTableHeaderItems[i].style.display = 'block';
+                }
+            },1500)
+            html2pdf().from(data).set(opt).save();
+    }
+
     switch(props.whichTable) {
         case 'institution':
             return (
-                <TableWrapper>
-                    <h1>Zestawienie danych</h1>
+                <div>
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <h1 >Zestawienie danych</h1>
+                    </div>
+                    <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                        <DataDownloadButton onClick={() => {printData('instytucje')}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Pobierz PDF</DataDownloadButton>
+                    </div>
+                <TableWrapper id="tableWithData">
                     <tr>
                         <th>
                             <p>Lp.</p>
-                            <img src={sort} onClick={() => {
+                            {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 setIdSorting(true);
                                 institutionSorting('idInstitution', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th>
                         <p>Nazwa</p>
-                            <img src={sort} onClick={() => {
+                            {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 institutionSorting('name', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th>
                         <p>Email</p>
-                            <img src={sort} onClick={() => {
+                            {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 institutionSorting('email', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th>
                         <p>Miejscowość</p>
-                            <img src={sort} onClick={() => {
+                            {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 institutionSorting('city', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th>
                         <p>Gmina</p>
-                            <img src={sort} onClick={() => {
+                            {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 institutionSorting('community', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th>
                         <p>Kod pocztowy</p>
-                            <img src={sort} onClick={() => {
+                            {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 institutionSorting('postalCode', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th>
                         <p>Adres</p>
-                            <img src={sort} onClick={() => {
+                            {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 institutionSorting('address', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th>
                         <p>Telefon</p>
-                            <img src={sort} onClick={() => {
+                            {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 institutionSorting('telephone', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th>
                         <p>FAX</p>
-                            <img src={sort} onClick={() => {
+                            {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 institutionSorting('fax', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
-                        <th>Akcje</th>
+                        <th id="actionsTableHeader">Akcje</th>
                     </tr>
                     {!data && !isLoading ? 'loading' : data.map((el,i) => {
                         // return <TableItem iterator={!props.handleSort[1] ? i+1 : data.length-i} whichTable="institution" id={el.idInstitution} name={el.name} email={el.email} city={el.city} community={el.community} postalCode={el.postalCode} address={el.address} telephone={el.telephone} fax={el.fax}/>
-                        return <TableItem iterator={(!props.handleSort[1] || !idSorting ? i+1 : data.length-i)} whichTable="institution" id={el.idInstitution} name={el.name} email={el.email} city={el.city} community={el.community} postalCode={el.postalCode} address={el.address} telephone={el.telephone} fax={el.fax}/>
+                        return <TableItem iterator={i+1} whichTable="institution" id={el.idInstitution} name={el.name} email={el.email} city={el.city} community={el.community} postalCode={el.postalCode} address={el.address} telephone={el.telephone} fax={el.fax}/>
                     })}
                     
                 </TableWrapper>
+                </div>
             ) 
         case 'employee':
             return (
-                <TableWrapper>
-                    <h1>Zestawienie danych</h1>
+                <div>
+                <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <h1 >Zestawienie danych</h1>
+                </div>
+                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <DataDownloadButton onClick={() => {printData('pracownicy')}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Pobierz PDF</DataDownloadButton>
+                </div>
+                <TableWrapper id="tableWithData">
                     <tr>
                         <th><p>Lp.</p>
-                        <img src={sort} onClick={() => {
+                        {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 setIdSorting(true);
                                 console.log(data)
                                 employeeSorting('idEmployee', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 console.log(data)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th><p>Imię</p>
-                        <img src={sort} onClick={() => {
+                        {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 employeeSorting('firstName', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th><p>Drugie imię</p>
-                        <img src={sort} onClick={() => {
+                        {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 employeeSorting('secondName', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th><p>Nazwisko</p>
-                        <img src={sort} onClick={() => {
+                        {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 employeeSorting('lastName', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
                         <th><p>Wiek</p>
-                        <img src={sort} onClick={() => {
+                        {/* <img src={sort} onClick={() => {
                                 setLoading(true);
                                 employeeSorting('age', props.handleSort[1], props.handleSort[2], setData, setIdSorting)
                                 setLoading(false);
-                            }} />
+                            }} /> */}
                         </th>
-                        <th>Akcje</th>
+                        <th id="actionsTableHeader">Akcje</th>
                     </tr>
                     {props.data.map((el, i) => {
-                        return <TableItem iterator={(!props.handleSort[1] || !idSorting ? i+1 : data.length-i)} whichTable="employee" id={el.idEmployee} name={el.firstName} secondName={el.secondName} lastName={el.lastName} age={el.age}/>
+                        return <TableItem iterator={i+1} whichTable="employee" id={el.idEmployee} name={el.firstName} secondName={el.secondName} lastName={el.lastName} age={el.age}/>
                     })}
                 </TableWrapper>
+                </div>
             )
         case 'programs':
             return (
-                <TableWrapper>
-                    <h1>Zestawienie danych</h1>
+                <div>
+                <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <h1 >Zestawienie danych</h1>
+                </div>
+                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <DataDownloadButton onClick={() => {printData('programy')}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Pobierz PDF</DataDownloadButton>
+                </div>
+                <TableWrapper id="tableWithData">
                     <tr>
                         <th>Lp.</th>
                         <th>Nazwa</th>
                         <th>Lokalnie / teren</th>
                         <th>Dla kogo</th>
-                        <th>Akcje</th>
+                        <th id="actionsTableHeader">Akcje</th>
 
                     </tr>
                     {!data && !isLoading ? 'loading' : props.data.map((el,i) => {
                         return <TableItem iterator={i+1} whichTable="programs" id={el.idProgram} name={el.name} isLocal={el.isLocal} forWho={el.forWho} classes={el.classes}/>
                     })}
                 </TableWrapper>
+                </div>
             )
             case 'events': 
             return (
-                <TableWrapper>
-                <h1>Zestawienie danych</h1>
+                <div>
+                <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <h1 >Zestawienie danych</h1>
+                </div>
+                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <DataDownloadButton onClick={() => {printData('wydarzenia')}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Pobierz PDF</DataDownloadButton>
+                </div>
+                <TableWrapper id="tableWithData">
                 <tr>
                     <th>Lp.</th>
                     <th>Data wizyty</th>
@@ -227,7 +280,7 @@ const TableData = (props) => {
                     <th>Liczba form pomocy</th>
                     <th>Inna nazwa</th>
                     <th>Dla kogo?</th>
-                    <th>Akcje</th>
+                    <th id="actionsTableHeader">Akcje</th>
 
     
                 </tr>
@@ -259,13 +312,14 @@ const TableData = (props) => {
                         <td>{el.howManyPrograms}</td>
                         <td>{el.differentNameProgram}</td>
                         <td>{defineForWho(findProgram.forWho, findProgram.classes)}</td>
-                        <td style={{display: "flex", justifyContent: "space-evenly"}}>
-                        {/* <DataButton width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Edytuj</DataButton> */}
-                        <DataButton onClick={() => {removeItem(el.idEvent, 'event')}} width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Usuń</DataButton>
+                        <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
+                        {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
+                        <DataButton class="removeBtn" onClick={() => {removeItem(el.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
                         </td>
                     </tr>
                 })}
             </TableWrapper>
+            </div>
             )
         default:
             return (
@@ -290,9 +344,9 @@ const TableItem = props => {
                     <td>{props.address}</td>
                     <td>{props.telephone}</td>
                     <td>{props.fax}</td>
-                    <td style={{display: "flex", justifyContent: "space-evenly"}}>
-                        {/* <DataButton width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Edytuj</DataButton> */}
-                        <DataButton onClick={() => {removeItem(props.id, 'institution')}} width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Usuń</DataButton>
+                    <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
+                        {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
+                        <DataButton onClick={() => {removeItem(props.id, 'institution')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
                     </td>
                 </tr>
             )
@@ -304,9 +358,9 @@ const TableItem = props => {
                     <td>{props.secondName}</td>
                     <td>{props.lastName}</td>
                     <td>{props.age}</td>
-                    <td style={{display: "flex", justifyContent: "space-evenly"}}>
-                        {/* <DataButton width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Edytuj</DataButton> */}
-                        <DataButton onClick={() => {removeItem(props.id, 'employee')}} width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Usuń</DataButton>
+                    <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
+                        {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
+                        <DataButton onClick={() => {removeItem(props.id, 'employee')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
                     </td>
                 </tr>
             )
@@ -317,9 +371,9 @@ const TableItem = props => {
                     <td>{props.name}</td>
                     <td>{props.isLocal ? "lokalnie" : "teren"}</td>
                     <td>{defineForWho(props.forWho, props.classes)}</td>
-                    <td style={{display: "flex", justifyContent: "space-evenly"}}>
-                        {/* <DataButton width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Edytuj</DataButton> */}
-                        <DataButton onClick={() => {removeItem(props.id, 'programs')}} width="0.2rem" height="0.1rem" fontSize="0.5rem" to="#">Usuń</DataButton>
+                    <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
+                        {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
+                        <DataButton onClick={() => {removeItem(props.id, 'programs')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
                     </td>
                 </tr>
             )

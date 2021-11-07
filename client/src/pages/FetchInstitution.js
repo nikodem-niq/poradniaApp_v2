@@ -12,14 +12,17 @@ import { postData } from "../middlewares/postData";
 const FetchInstitution = () => {
     const [institutionData, setInstitutionData] = useState([]);
     const [isAscending, setDescending] = useState(false)
+    const [ifReload, setReload] = useState(false);
 
     useEffect(() => {
         fetchData('/fetchData/institution-get').then(response => {
             setInstitutionData(response.data.rows)
+            setReload(false);
+            console.log(ifReload);
         }).catch(err => {
             console.log(err);
         })
-    }, [])
+    }, [ifReload])
 
     const handleStateChange = useCallback(state => {
         setInstitutionData(state);
@@ -29,7 +32,7 @@ const FetchInstitution = () => {
         <OuterWrapper>
             <Navbar/>
             <InnerWrapper>
-                <AddInstitution/>
+                <AddInstitution ifReloadData={setReload}/>
                 <TableData whichTable="institution" data={institutionData} handleSort={[handleStateChange, isAscending, setDescending]}/>
             </InnerWrapper>
         </OuterWrapper>
@@ -46,6 +49,18 @@ const AddInstitution = props => {
     const [address, setAddress] = useState("");
     const [telephone, setTelephone] = useState("");
     const [fax, setFax] = useState("");
+
+    const handleReset = () => {
+        setNameOfInstitution("");
+        setEmail("");
+        setCity("");
+        setPostalCode("");
+        setCommunity("");
+        setAddress("");
+        setTelephone("");
+        setFax("");
+        document.querySelector('form').reset();
+    }
 
     const handleChange = (event) => {
         const { value, name } = event.target;
@@ -81,7 +96,7 @@ const AddInstitution = props => {
     }
 
     let isFormValid = () =>{
-        let isValid = nameOfInstitution != '' && email != '' && city != '' && postalCode  != '' && community != '' && address != '' && telephone != '' && fax != '' 
+        let isValid = nameOfInstitution !== '' && email !== '' && city !== '' && postalCode  !== '' && community !== '' && address !== '' && telephone !== '' && fax !== '' 
         return isValid ? '' : 'disabled';
 
     }
@@ -102,7 +117,9 @@ const AddInstitution = props => {
                     <input type="text" onChange={handleChange} name="address" id="address" placeholder="Adres placówki.."/>
                     <input type="text" onChange={handleChange} name="telephone" id="telephone" placeholder="Telefon placówki.."/>
                     <input type="text" onChange={handleChange} name="fax" id="fax" placeholder="FAX placówki.."/>
-                    <AddButton to="#" onClick={() => {postData("/postData/institution-add",{nameOfInstitution, email, city, postalCode, community, address, telephone, fax})}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => {postData("/postData/institution-add",{nameOfInstitution, email, city, postalCode, community, address, telephone, fax},null,props.ifReloadData)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    {/* <AddButton style={{margin: '1rem'}} to="#" onClick={() => {handleReset()}}>Resetuj</AddButton> */}
+
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }

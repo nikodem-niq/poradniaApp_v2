@@ -66,7 +66,26 @@ export const DataButton = styled(Link)`
     font-size: ${props => props.fontSize ? props.fontSize : '1rem'};
     border: none;
     border-radius: 10px;
+
 `
+
+export const DataDownloadButton = styled(Link)`
+    background-color: blue;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    width: ${props => props.width ? props.width : '5rem'};
+    height: ${props => props.height ? props.height : '1.5rem'};
+    padding: 1rem;
+    font-size: ${props => props.fontSize ? props.fontSize : '1rem'};
+    border: none;
+    border-radius: 10px;
+    margin: 1rem 4rem;
+
+`
+
 const ButtonWrapper = styled.div`
     display: flex;
     justify-content: space-evenly;

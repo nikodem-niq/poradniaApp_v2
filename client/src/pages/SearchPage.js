@@ -7,6 +7,13 @@ import { OuterWrapper } from "../components/OuterWrapper";
 import TableData from "../components/TableData";
 import { postData } from "../middlewares/postData";
 
+let classesArray = new Array(13).fill(false);
+const endpoints = [
+    '/fetchData/institution-get',
+    '/fetchData/employee-get',
+    '/fetchData/programs-get',
+    '/fetchData/events-get'
+]
 
 const SearchPage = () => {
 
@@ -17,12 +24,6 @@ const SearchPage = () => {
     const [programsData, setProgramsData] = useState([]);
 
     useEffect(() => {
-        const endpoints = [
-            '/fetchData/institution-get',
-            '/fetchData/employee-get',
-            '/fetchData/programs-get',
-            '/fetchData/events-get'
-        ]
 
         axios.all(endpoints.map((endpoint) => axios.get(endpoint, {headers: { 'x-access-token' : localStorage.getItem('userToken') }}))).then(
             axios.spread(( institution, employee, programs, events ) => {
@@ -42,6 +43,7 @@ const SearchPage = () => {
     const [secondDate, setSecondDate] = useState('');
     const [employees, setEmployees] = useState('');
     const [nameOfInstitution, setNameOfInstitution] = useState('');
+    const [community, setCommunity] = useState('');
     const [nameOfProgram, setNameOfProgram] = useState('');
     const [typeOfProgram, setTypeOfProgram] = useState('');
     const [firstParticipiants, setFirstParticipiants] = useState(0);
@@ -49,55 +51,99 @@ const SearchPage = () => {
     const [firstPrograms, setFirstPrograms] = useState(0);
     const [secondPrograms, setSecondPrograms] = useState(0);
     const [differentNameProgram, setDifferentNameProgram] = useState('');
+    const [classes, setClasses] = useState([]);
+
     
+    const handleCheckBox = (event) => {
+        const { value, checked } = event.target;
+        if(checked) {
+            classesArray[value] = true;
+        } else {
+            classesArray[value] = false;
+        }
+        setClasses(classesArray.join(','));
+    }
+
     const handleChange = event => {
         event.preventDefault();
         const { name,value } = event.target;
-        if(name == 'firstDate') {
+        if(name === 'firstDate') {
             setFirstDate(value);
-        } else if(name == 'secondDate') {
+        } else if(name === 'secondDate') {
             setSecondDate(value);
-        } else if(name == 'employees') {
+        } else if(name === 'employees') {
             setEmployees(value);
-        } else if(name == 'nameOfInstitution') {
+        } else if(name === 'nameOfInstitution') {
             setNameOfInstitution(value);
-        } else if(name == 'nameOfProgram') {
+        } else if(name === 'community') {
+            setCommunity(value);
+        } else if(name === 'nameOfProgram') {
             setNameOfProgram(value);
-        } else if(name == 'typeOfProgram') {
+        } else if(name === 'typeOfProgram') {
             setTypeOfProgram(value);
-        } else if(name == 'firstParticipiants') {
+        } else if(name === 'firstParticipiants') {
             setFirstParticipiants(value);
-        } else if(name == 'secondParticipiants') {
+        } else if(name === 'secondParticipiants') {
             setSecondParticipiants(value);
-        } else if(name == 'firstPrograms') {
+        } else if(name === 'firstPrograms') {
             setFirstPrograms(value);
-        } else if(name == 'secondPrograms') {
+        } else if(name === 'secondPrograms') {
             setSecondPrograms(value);
-        } else if(name == 'differentNameProgram') {
+        } else if(name === 'differentNameProgram') {
             setDifferentNameProgram(value);
         }
     }
 
     const handleSearch = () => {
-        postData('/postData/search',{firstDate,secondDate,employees,nameOfInstitution,nameOfProgram,typeOfProgram,firstParticipiants,secondParticipiants,firstPrograms,secondPrograms,differentNameProgram}, setEventData);
+        postData('/postData/search',{firstDate,secondDate,employees,nameOfInstitution,community,nameOfProgram,typeOfProgram,firstParticipiants,secondParticipiants,firstPrograms,secondPrograms,differentNameProgram, classes}, setEventData, false);
     }
+
+    const handleReset = () => {
+            document.getElementById('searchForm').reset();
+            setFirstDate('');
+            setSecondDate('');
+            setEmployees('');
+            setNameOfInstitution('');
+            setCommunity('');
+            setNameOfProgram('');
+            setTypeOfProgram('');
+            setFirstParticipiants(0);
+            setSecondParticipiants(0);
+            setFirstPrograms(0);
+            setSecondPrograms(0);
+            setDifferentNameProgram('');
+            setClasses([]);
+            axios.all(endpoints.map((endpoint) => axios.get(endpoint, {headers: { 'x-access-token' : localStorage.getItem('userToken') }}))).then(
+                axios.spread(( institution, employee, programs, events ) => {
+                    setInstitutionData(institution.data.rows);
+                    setEmployeeData(employee.data.rows);
+                    setProgramsData(programs.data.rows);
+                    setEventData(events.data.rows);
+                })
+              );
+        }
 
 
     return (
         <OuterWrapper>
             <Navbar/>
             <InnerWrapper>
-                <Form>
-                    <label style={{marginTop: '1rem',}}>Wyszukiwanie <p style={{marginTop: '1rem', color: 'red'}}>(jeśli pole nie jest wymagane <b>ZOSTAW PUSTE!</b>)</p></label>
+                <Form id="searchForm">
+                    <label style={{marginTop: '1rem'}}>Wyszukiwanie <p style={{marginTop: '1rem', color: 'red'}}>(jeśli pole nie jest wymagane <b>ZOSTAW PUSTE!</b>)</p></label>
                     <FormItem what="dateOfEvent" handleChange={handleChange}/>
                     <FormItem what="employees" handleChange={handleChange}/>
                     <FormItem what="nameOfInstitution" handleChange={handleChange}/>
+                    <FormItem what="community" handleChange={handleChange}/>
                     <FormItem what="nameOfProgram" handleChange={handleChange}/>
                     <FormItem what="typeOfProgram" handleChange={handleChange}/>
                     <FormItem what="howManyParticipiants" handleChange={handleChange}/>
                     <FormItem what="howManyPrograms" handleChange={handleChange}/>
                     <FormItem what="differentNameProgram" handleChange={handleChange}/>
-                    <AddButton to="#" onClick={handleSearch}>Szukaj</AddButton>
+                    <FormItem what="classes" handleCheckBox={handleCheckBox}/>
+                    <div style={{display: 'flex'}}>
+                    <AddButton style={{margin: '1rem'}} to="#" onClick={handleSearch}>Szukaj</AddButton>
+                    <AddButton style={{margin: '1rem'}} to="#" onClick={handleReset}>Resetuj wyniki</AddButton>
+                    </div>
                 </Form>
                 <TableData whichTable="events" eventData={eventData} programsData={programsData} employeeData={employeeData} institutionData={institutionData}/>
             </InnerWrapper>
@@ -132,28 +178,35 @@ const FormItem = props => {
         case 'employees':
             return (
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Dane pracownika </label> <br/>
+                    {/* <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Dane pracownika </label> <br/> */}
                     <input onChange={props.handleChange} type="text" name="employees" id="employees" placeholder="Wpisz imie/nazwisko pracownika (np. Kowalski)"/>
                 </div>
             )
         case 'nameOfInstitution':
             return (
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Nazwa placówki </label> <br/>
+                    {/* <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Nazwa placówki </label> <br/> */}
                     <input onChange={props.handleChange} type="text" name="nameOfInstitution" id="nameOfInstitution" placeholder="Wpisz nazwe placówki (nie musi być pełna)"/>
+                </div>
+            )
+        case 'community':
+            return (
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    {/* <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Gmina </label> <br/> */}
+                    <input onChange={props.handleChange}  type="text" name="community" id="community" placeholder="Wpisz gmine (nie musi być pełna)"/>
                 </div>
             )
         case 'nameOfProgram':
             return (
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Nazwa programu </label> <br/>
+                    {/* <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Nazwa programu </label> <br/> */}
                     <input onChange={props.handleChange}  type="text" name="nameOfProgram" id="nameOfProgram" placeholder="Wpisz nazwe programu (nie musi być pełna)"/>
                 </div>
             )
         case 'typeOfProgram':
             return (
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Typ programu </label> <br/>
+                    {/* <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Typ programu </label> <br/> */}
                     <input onChange={props.handleChange} type="text" name="typeOfProgram" id="typeOfProgram" placeholder="Wpisz nazwe rodzaju programu (nie musi być pełna)"/>
                 </div>
             )
@@ -194,8 +247,77 @@ const FormItem = props => {
         case 'differentNameProgram':
             return (
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Inna nazwa programu </label> <br/>
+                    {/* <label style={{marginTop: '3rem', marginBottom: '3rem'}}> Inna nazwa programu </label> <br/> */}
                     <input onChange={props.handleChange} type="text" name="differentNameProgram" id="differentNameProgram" placeholder="Wpisz inną nazwe programu (nie musi być pełna)"/>
+                </div>
+            )
+        case 'classes':
+            return (
+                    <div id="checkboxDiv">
+                    <div>
+                        <label for="class1">Klasa 1</label>
+                        <input type="checkbox" id="class1" name="class1" value="0" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class2">Klasa 2</label>
+                        <input type="checkbox" id="class2" name="class2" value="1" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class3">Klasa 3</label>
+                        <input type="checkbox" id="class3" name="class3" value="2" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class4">Klasa 4</label>
+                        <input type="checkbox" id="class4" name="class4" value="3" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class5">Klasa 5</label>
+                        <input type="checkbox" id="class5" name="class5" value="4" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class6">Klasa 6</label>
+                        <input type="checkbox" id="class6" name="class6" value="5" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class7">Klasa 7</label>
+                        <input type="checkbox" id="class7" name="class7" value="6" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class8">Klasa 8</label>
+                        <input type="checkbox" id="class8" name="class8" value="7" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class9">Klasa 1 (liceum, technikum)</label>
+                        <input type="checkbox" id="class9" name="class9" value="8" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class10">Klasa 2 (liceum, technikum)</label>
+                        <input type="checkbox" id="class10" name="class10" value="9" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class11">Klasa 3 (liceum, technikum)</label>
+                        <input type="checkbox" id="class11" name="class11" value="10" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class12">Klasa 4 (liceum, technikum)</label>
+                        <input type="checkbox" id="class12" name="class12" value="11" onChange={props.handleCheckBox}/>
+                    </div>
+
+                    <div>
+                        <label for="class13">Klasa 5 (liceum, technikum)</label>
+                        <input type="checkbox" id="class13" name="class13" value="12" onChange={props.handleCheckBox}/>
+                    </div>
                 </div>
             )
         default:
@@ -229,6 +351,17 @@ const Form = styled.form`
     flex-direction: column;
     align-items: center;
     margin-top: 1rem;
+
+    #checkboxDiv {
+        input {
+            width: 1rem;
+        }
+
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 
     label {
         font-size: 1.5rem;

@@ -21,7 +21,7 @@ router.post('/institution-add', verifyToken, (req,res,next) => {
       client.query(`INSERT INTO institution(name, email, city, community, "postalCode", address, telephone, fax) VALUES('${nameOfInstitution}', '${email}', '${city}', '${community}', '${postalCode}', '${address}',
       '${telephone}', '${fax}')`, (err, response) => {
         client.release();
-        res.status(200).json(response.rowCount);
+        res.status(200).json(response);
       });
     })
   }
@@ -93,13 +93,33 @@ router.post('/event-add', verifyToken, (req,res,next) => {
 router.post('/search', verifyToken, async (req,res,next) => {
   const client = await pool.connect()
   // Querying 
-  const { firstDate, secondDate, employees, nameOfInstitution, nameOfProgram, typeOfProgram, firstParticipiants, secondParticipiants, firstPrograms, secondPrograms, differentNameProgram } = req.body;
+  const { firstDate, secondDate, employees, nameOfInstitution, community, nameOfProgram, typeOfProgram, firstParticipiants, secondParticipiants, firstPrograms, secondPrograms, differentNameProgram, classes } = req.body;
   let query = `SELECT * FROM "programEvent" WHERE "idEvent" IS NOT NULL `
 
-  const checkInstitutions = async () => {
+  const checkInstitutionsName = async () => {
     let institutionId = [];
+    // let query = 'SELECT "idInstitution" FROM "institution" WHERE "idInstitution" IS NOT NULL'
     if(nameOfInstitution) {
       const institutionQuery = await client.query(`SELECT "idInstitution" FROM "institution" WHERE LOWER(name) LIKE LOWER('%${nameOfInstitution}%')`);
+        if(institutionQuery.rowCount > 0) {
+          for(let i=0; i<institutionQuery.rowCount; i++) {
+            institutionId.push(institutionQuery.rows[i].idInstitution)
+            }
+            if(institutionId.length > 0) {
+              return institutionId
+            } else { 
+              return false;
+            }
+          }
+          // client.release();
+    }
+  }
+
+  const checkInstitutionsCommunity = async () => {
+    let institutionId = [];
+    // let query = 'SELECT "idInstitution" FROM "institution" WHERE "idInstitution" IS NOT NULL'
+    if(community) {
+      const institutionQuery = await client.query(`SELECT "idInstitution" FROM "institution" WHERE LOWER(community) LIKE LOWER('%${community}%')`);
         if(institutionQuery.rowCount > 0) {
           for(let i=0; i<institutionQuery.rowCount; i++) {
             institutionId.push(institutionQuery.rows[i].idInstitution)
@@ -131,6 +151,35 @@ router.post('/search', verifyToken, async (req,res,next) => {
           // client.release();
     }
   }
+
+  const checkClasses = async () => {
+    if(classes) {
+      let indexOfClass = [];
+      const reqClasses = classes.split(',');
+      for(let i=0; i<13; i++) {
+        if(reqClasses[i] == 'true') {
+          indexOfClass.push(i);
+        }
+      }
+
+      const programQuery = await client.query(`SELECT "idProgram",classes FROM "programs"`);
+      let same = [];
+
+      if(indexOfClass) {
+        for(let j=0; j<programQuery.rowCount; j++) {
+          for(let a=0; a<indexOfClass.length; a++) {
+            if(programQuery.rows[j].classes.split(',')[indexOfClass[a]] == 'true') {
+              if(!same.includes(programQuery.rows[j].idProgram)) {
+                same.push(programQuery.rows[j].idProgram);
+              }
+            }
+          }
+        }
+
+        return same;
+      }
+    }
+  }
     // General Query
     if(firstDate && secondDate) {
       query += `AND "dateOfEvent" >= '${firstDate}' AND "dateOfEvent" <= '${secondDate}' `
@@ -140,10 +189,21 @@ router.post('/search', verifyToken, async (req,res,next) => {
       query += `AND LOWER(employees) LIKE LOWER('%${employees}%') `
     }
 
-    if(checkInstitutions()) {
-      let institutions = await checkInstitutions();
+    if(checkInstitutionsName()) {
+      let institutions = await checkInstitutionsName();
       if(institutions) {
         query += `AND ( `
+        for(let i=0; i<institutions.length; i++) {
+          query += `${institutions.length > 1 && i != 0 ? 'OR ' : ''}"institutionId" = ${institutions[i]} `
+        }
+        query += `)`
+      } 
+    }
+
+    if(checkInstitutionsCommunity()) {
+      let institutions = await checkInstitutionsCommunity();
+      if(community) {
+        query += ` AND ( `
         for(let i=0; i<institutions.length; i++) {
           query += `${institutions.length > 1 && i != 0 ? 'OR ' : ''}"institutionId" = ${institutions[i]} `
         }
@@ -156,8 +216,9 @@ router.post('/search', verifyToken, async (req,res,next) => {
       if(programs) {
         query += `AND ( `
         for(let i=0; i<programs.length; i++) {
-          query += `${programs.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${programs[i]} )`
+          query += `${programs.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${programs[i]} `
         }
+        query += `)`
       } 
     }
 
@@ -177,7 +238,15 @@ router.post('/search', verifyToken, async (req,res,next) => {
       query += `AND LOWER("differentNameProgram") LIKE LOWER('%${differentNameProgram}%') `
     }
 
-    // console.log(query);
+    if(classes.length > 0) {
+      const idsOfPrograms = await checkClasses();
+      query += `AND ( `
+      for(let i=0; i<idsOfPrograms.length; i++) {
+        query += `${idsOfPrograms.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${idsOfPrograms[i]} `
+      }
+      query += `)`
+    }
+
     const finalQuery = await client.query(query);
     res.status(200).json(finalQuery.rows);
 
