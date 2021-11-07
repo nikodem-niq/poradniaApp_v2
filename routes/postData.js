@@ -120,7 +120,7 @@ router.post('/search', verifyToken, async (req,res,next) => {
     // let query = 'SELECT "idInstitution" FROM "institution" WHERE "idInstitution" IS NOT NULL'
     if(community) {
       const institutionQuery = await client.query(`SELECT "idInstitution" FROM "institution" WHERE LOWER(community) LIKE LOWER('%${community}%')`);
-        if(institutionQuery.rowCount > 0) {
+      if(institutionQuery.rowCount > 0) {
           for(let i=0; i<institutionQuery.rowCount; i++) {
             institutionId.push(institutionQuery.rows[i].idInstitution)
             }
@@ -129,6 +129,8 @@ router.post('/search', verifyToken, async (req,res,next) => {
             } else { 
               return false;
             }
+          } else {
+            return false;
           }
           // client.release();
     }
@@ -202,7 +204,8 @@ router.post('/search', verifyToken, async (req,res,next) => {
 
     if(checkInstitutionsCommunity()) {
       let institutions = await checkInstitutionsCommunity();
-      if(community) {
+
+      if(community && institutions) {
         query += ` AND ( `
         for(let i=0; i<institutions.length; i++) {
           query += `${institutions.length > 1 && i != 0 ? 'OR ' : ''}"institutionId" = ${institutions[i]} `
