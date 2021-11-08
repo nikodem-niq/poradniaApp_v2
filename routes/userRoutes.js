@@ -67,9 +67,13 @@ router.post('/auth', (req,res,next) => {
                             res.status(401).send({msg : 'bad password'})
                         }
                     })
+                }).catch(err => {
+                    console.log(err);
                 })
             }
         });
+    }).catch(err => {
+        console.log(err);
     });
 
 })
