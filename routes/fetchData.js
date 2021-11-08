@@ -18,9 +18,10 @@ router.get('/institution-get', verifyToken, (req,res,next) => {
       if(column || order || limit) {
         let query = `SELECT * FROM institution ORDER BY "${column}" ${order || 'ASC'} LIMIT ${limit || 'ALL'}`;
         client.query(query).then(response => {
-          res.status(200).send(response);
           client.release();
+          res.status(200).send(response);
         }).catch(err => {
+          client.release();
           console.log(err);
         })
       } else {
@@ -47,9 +48,10 @@ router.get('/employee-get', verifyToken, (req,res,next) => {
     if(column || order || limit) {
       let query = `SELECT * FROM employee ORDER BY "${column}" ${order || 'ASC'} LIMIT ${limit || 'ALL'}`;
       client.query(query).then(response => {
-        res.status(200).send(response);
         client.release();
+        res.status(200).send(response);
       }).catch(err => {
+        client.release();
         console.log(err);
       })
     } else {

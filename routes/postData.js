@@ -49,12 +49,12 @@ router.post('/employee-add', verifyToken, (req,res,next) => {
 })
 
 router.post('/program-add', verifyToken, (req,res,next) => {
-  const { name, isLocal, forWho, classes } = req.body;
+  const { name, isLocal, typeOfProgram, forWho, classes } = req.body;
   if(!(name)) {
     res.status(403).json({message: "Invalid parameters"});
   } else {    
     pool.connect().then(client => {
-      const query = `INSERT INTO programs(name, "isLocal", "forWho", "classes") VALUES('${name}', ${isLocal}, ${forWho}, '${classes}')`
+      const query = `INSERT INTO programs(name, "isLocal", "typeOfProgram", "forWho", "classes") VALUES('${name}', ${isLocal}, '${typeOfProgram}', ${forWho}, '${classes}')`
 
       client.query(query, (err, response) => {
         client.release();
@@ -70,18 +70,20 @@ router.post('/program-add', verifyToken, (req,res,next) => {
 })
 
 router.post('/event-add', verifyToken, (req,res,next) => {
-  const { dateOfEvent, employees, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
+  const { dateOfEvent, employees, institutionId, programId, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
+  console.log(employees);
+  console.log(howManyParticipiants)
   if(!(dateOfEvent)) {
     res.status(403).json({message: "Invalid parameters"});
   } else {    
     pool.connect().then(client => {
-      const query = `INSERT INTO "programEvent"("dateOfEvent", "employees", "institutionId", "programId", "typeOfProgram", "howManyParticipiants", "howManyPrograms", "differentNameProgram") VALUES('${dateOfEvent}', '${employees}', ${institutionId}, ${programId}, '${typeOfProgram}', ${howManyParticipiants}, ${howManyPrograms}, '${differentNameProgram}')`
-
+      const query = `INSERT INTO "programEvent"("dateOfEvent", "employees", "institutionId", "programId", "howManyParticipiants", "howManyPrograms", "differentNameProgram") VALUES('${dateOfEvent}', '${employees}', ${institutionId}, ${programId}, ${howManyParticipiants}, ${howManyPrograms}, '${differentNameProgram}')`
+      // console.log(query)
       client.query(query, (err, response) => {
         client.release();
         if(err) {
           console.log(err);
-          res.json(err);
+          res.status(400).json(err);
         } else {
           res.status(200).json(response);
         }
@@ -98,9 +100,9 @@ router.post('/search', verifyToken, async (req,res,next) => {
   try {
     const checkInstitutionsName = async () => {
       let institutionId = [];
-      // let query = 'SELECT "idInstitution" FROM "institution" WHERE "idInstitution" IS NOT NULL'
       if(nameOfInstitution) {
         const institutionQuery = await client.query(`SELECT "idInstitution" FROM "institution" WHERE LOWER(name) LIKE LOWER('%${nameOfInstitution}%')`);
+        // client.release();
           if(institutionQuery.rowCount > 0) {
             for(let i=0; i<institutionQuery.rowCount; i++) {
               institutionId.push(institutionQuery.rows[i].idInstitution)
@@ -111,7 +113,6 @@ router.post('/search', verifyToken, async (req,res,next) => {
                 return false;
               }
             }
-            // client.release();
       }
     }
   
@@ -120,6 +121,7 @@ router.post('/search', verifyToken, async (req,res,next) => {
       // let query = 'SELECT "idInstitution" FROM "institution" WHERE "idInstitution" IS NOT NULL'
       if(community) {
         const institutionQuery = await client.query(`SELECT "idInstitution" FROM "institution" WHERE LOWER(community) LIKE LOWER('%${community}%')`);
+        // client.release();
         if(institutionQuery.rowCount > 0) {
             for(let i=0; i<institutionQuery.rowCount; i++) {
               institutionId.push(institutionQuery.rows[i].idInstitution)
@@ -132,7 +134,6 @@ router.post('/search', verifyToken, async (req,res,next) => {
             } else {
               return false;
             }
-            // client.release();
       }
     }
   
@@ -140,6 +141,7 @@ router.post('/search', verifyToken, async (req,res,next) => {
       let programsId = [];
       if(nameOfProgram) {
         const programQuery = await client.query(`SELECT "idProgram" FROM "programs" WHERE LOWER(name) LIKE LOWER('%${nameOfProgram}%')`);
+        // client.release();
           if(programQuery.rowCount > 0) {
             for(let i=0; i<programQuery.rowCount; i++) {
               programsId.push(programQuery.rows[i].idProgram)
@@ -150,7 +152,23 @@ router.post('/search', verifyToken, async (req,res,next) => {
                 return false;
               }
             }
-            // client.release();
+      }
+    }
+
+    const checkTypeOfProgram = async () => {
+      let programsId = [];
+      if(typeOfProgram) {
+        const programQuery = await client.query(`SELECT "idProgram" FROM "programs" WHERE LOWER("typeOfProgram") LIKE LOWER('%${typeOfProgram}%')`);
+          if(programQuery.rowCount > 0) {
+            for(let i=0; i<programQuery.rowCount; i++) {
+              programsId.push(programQuery.rows[i].idProgram)
+              }
+              if(programsId.length > 0) {
+                return programsId
+              } else { 
+                return false;
+              }
+            }
       }
     }
   
@@ -228,9 +246,16 @@ router.post('/search', verifyToken, async (req,res,next) => {
           query += `)`
         } 
       }
-  
+
       if(typeOfProgram) {
-        query += `AND LOWER("typeOfProgram") LIKE LOWER('%${typeOfProgram}%') `
+        let programs = await checkTypeOfProgram();
+        if(programs) {
+          query += `AND ( `
+          for(let i=0; i<programs.length; i++) {
+            query += `${programs.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${programs[i]} `
+          }
+          query += `)`
+        } 
       }
   
       if(firstParticipiants) {
@@ -264,10 +289,10 @@ router.post('/search', verifyToken, async (req,res,next) => {
   
       console.log(query)
       const finalQuery = await client.query(query);
-      res.status(200).json(finalQuery.rows);
-  
       client.release();
+      res.status(200).json(finalQuery.rows);
   } catch(err) {
+    client.release();
     res.status(200).json(finalQuery);
   }
  

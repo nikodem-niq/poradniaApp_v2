@@ -19,8 +19,10 @@ router.delete('/removeInstitution', verify, (req,res,next) => {
   const { id } = req.query;
   pool.connect().then((client) => {
     client.query(`DELETE FROM institution WHERE "idInstitution" = '${id}'`).then(response => {
+      client.release();
       res.status(200).json(response);
     }).catch(err => {
+      client.release();
       console.log(err);
       res.status(403).json(err);
     })
@@ -31,8 +33,10 @@ router.delete('/removeEmployee', verify, (req,res,next) => {
   const { id } = req.query;
   pool.connect().then((client) => {
     client.query(`DELETE FROM employee WHERE "idEmployee" = '${id}'`).then(response => {
+      client.release();
       res.status(200).json(response);
     }).catch(err => {
+      client.release();
       console.log(err);
       res.status(403).json(err);
     })
@@ -43,8 +47,10 @@ router.delete('/removeProgram', verify, (req,res,next) => {
   const { id } = req.query;
   pool.connect().then((client) => {
     client.query(`DELETE FROM programs WHERE "idProgram" = '${id}'`).then(response => {
+      client.release();
       res.status(200).json(response);
     }).catch(err => {
+      client.release();
       console.log(err);
       res.status(403).json(err);
     })
@@ -55,8 +61,10 @@ router.delete('/removeEvent', verify, (req,res,next) => {
   const { id } = req.query;
   pool.connect().then((client) => {
     client.query(`DELETE FROM "programEvent" WHERE "idEvent" = '${id}'`).then(response => {
+      client.release();
       res.status(200).json(response);
     }).catch(err => {
+      client.release();
       console.log(err);
       res.status(403).json(err);
     })

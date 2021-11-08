@@ -10,9 +10,10 @@ const defineForWho = (data,classes) => {
     switch(data) {
         case 0:
             if(classes) {
+                // console.log(classes)
                 let classList = [];
                 let splittedClass = classes.split(',');
-                for(let i=0; i<13; i++) {
+                for(let i=0; i<classes.length; i++) {
                     if(splittedClass[i] === true || splittedClass[i] === 'true') {
                         switch(i) {
                             case 8:
@@ -29,6 +30,15 @@ const defineForWho = (data,classes) => {
                                 break;
                             case 12:
                                 classList.push('5 T');
+                                break;
+                            case 13:
+                                classList.push('PP (Przedszkole)');
+                                break;
+                            case 14:
+                                classList.push('0-3 Podst.');
+                                break;
+                            case 15:
+                                classList.push('4-6 Podst.');
                                 break;
                             default:
                                 classList.push(`${i+1} pods.`);
@@ -248,12 +258,13 @@ const TableData = (props) => {
                         <th>Lp.</th>
                         <th>Nazwa</th>
                         <th>Lokalnie / teren</th>
+                        <th>Rodzaj</th>
                         <th>Dla kogo</th>
                         <th id="actionsTableHeader">Akcje</th>
 
                     </tr>
                     {!data && !isLoading ? 'loading' : props.data.map((el,i) => {
-                        return <TableItem iterator={i+1} whichTable="programs" id={el.idProgram} name={el.name} isLocal={el.isLocal} forWho={el.forWho} classes={el.classes}/>
+                        return <TableItem iterator={i+1} whichTable="programs" id={el.idProgram} name={el.name} isLocal={el.isLocal} typeOfProgram={el.typeOfProgram} forWho={el.forWho} classes={el.classes}/>
                     })}
                 </TableWrapper>
                 </div>
@@ -307,7 +318,7 @@ const TableData = (props) => {
                         <td>{findInstitution.name}</td>
                         <td>{findInstitution.community}</td>
                         <td>{findProgram.name}</td>
-                        <td>{el.typeOfProgram}</td>
+                        <td>{findProgram.typeOfProgram}</td>
                         <td>{el.howManyParticipiants}</td>
                         <td>{el.howManyPrograms}</td>
                         <td>{el.differentNameProgram}</td>
@@ -370,6 +381,7 @@ const TableItem = props => {
                     <td>{props.iterator}</td>
                     <td>{props.name}</td>
                     <td>{props.isLocal ? "lokalnie" : "teren"}</td>
+                    <td>{props.typeOfProgram}</td>
                     <td>{defineForWho(props.forWho, props.classes)}</td>
                     <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
                         {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}

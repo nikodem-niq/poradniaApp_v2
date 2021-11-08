@@ -18,7 +18,7 @@ const FetchEvents = () => {
     const [employees, setEmployee] = useState("");
     const [institutionId, setInstitutionId] = useState("");
     const [programId, setProgramId] = useState("");
-    const [typeOfProgram, setTypeOfProgram] = useState("");
+    // const [typeOfProgram, setTypeOfProgram] = useState("");
     const [howManyParticipiants, setHowManyParticipiants] = useState("");
     const [howManyPrograms, setHowManyPrograms] = useState("");
     const [differentNameProgram, setDifferentNameProgram] = useState("");
@@ -37,7 +37,7 @@ const FetchEvents = () => {
 
     const handleChange = (event) => {
         validate(event.target.name,event.target.value,errors,setErrors)
-
+        // console.log(event.target.selectedOptions[0].getAttribute('data-id'));
         if(event.target.name == 'employeeId') {
             employeesNames.push(event.target.value);
             const uniqueNames = Array.from(new Set(employeesNames)).join(', ');
@@ -48,8 +48,9 @@ const FetchEvents = () => {
             setInstitutionId(event.target.selectedOptions[0].getAttribute('data-id'))
         } else if(event.target.name == 'programsId') {
             setProgramId(event.target.selectedOptions[0].getAttribute('data-id'))
-        } else if(event.target.name == 'typeOfProgram') {
-            setTypeOfProgram(event.target.value);
+        // } else if(event.target.name == 'typeOfProgram') {
+        //     setTypeOfProgram(event.target.value);
+        // 
         } else if(event.target.name == 'howManyParticipiants') {
             setHowManyParticipiants(event.target.value);
         } else if(event.target.name == 'howManyPrograms') {
@@ -83,11 +84,17 @@ const FetchEvents = () => {
         employeesNames.splice(0,employeesNames.length);
         setInstitutionId("");
         setProgramId("");
-        setTypeOfProgram("");
+        // setTypeOfProgram("");
         setHowManyParticipiants("");
         setHowManyPrograms("");
         setDifferentNameProgram("");
+        document.getElementById('firstOptionInstitution').disabled = false;
+        document.getElementById('firstOptionProgram').disabled = false;
+        document.getElementById('firstOptionEmployee').disabled = false;
         document.querySelector('form').reset();
+        document.getElementById('firstOptionInstitution').disabled = true;
+        document.getElementById('firstOptionProgram').disabled = true;
+        document.getElementById('firstOptionEmployee').disabled = true;
     }
 
     useEffect(() => {
@@ -132,25 +139,25 @@ const FetchEvents = () => {
                         return <SelectEmployee i={i} employeeData={employeeData} handleChange={handleChange}/>
                     })}
                     <select name="institutionId" id="institutionId" onChange={handleChange}>
-                        <option disabled selected>-- Wybierz szkołe --</option>
+                        <option disabled selected id="firstOptionInstitution">-- Wybierz szkołe --</option>
                         {institutionData.map((el) => {
                             return <SelectItem key={el.idInstitution} id={el.idInstitution} name={el.name} community={el.community}/>
                         })}
                     </select>
                     <select name="programsId" id="programsId" onChange={handleChange}>
-                        <option disabled selected>-- Wybierz program --</option>
+                        <option disabled selected id="firstOptionProgram">-- Wybierz program --</option>
                         {programsData.map((el) => {
                             return <SelectItem key={el.idProgram} id={el.idProgram} name={el.name}/>
                         })}
                     </select>
-                    <input type="text" onChange={handleChange} name="typeOfProgram" id="typeOfProgram" placeholder="Rodzaj zajęć.."/>
+                    {/* <input type="text" onChange={handleChange} name="typeOfProgram" id="typeOfProgram" placeholder="Rodzaj zajęć.."/> */}
                     <input type="number" onChange={handleChange} name="howManyParticipiants" id="howManyParticipiants" placeholder="Ilu uczestników.."/>
                     {errors.howManyParticipiants !== ''  ? <ErrorBox>{errors.howManyParticipiants}</ErrorBox> : ''}
                     <input type="number" onChange={handleChange} name="howManyPrograms" id="howManyPrograms" placeholder="Ile form pomocy.."/>
                     {errors.howManyPrograms !== ''  ? <ErrorBox>{errors.howManyPrograms}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="differentNameProgram" id="differentNameProgram" placeholder="Inna nazwa programu.."/>
 
-                    <AddButton to="#" onClick={() => { postData("/postData/event-add",{dateOfEvent, employees, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram}, null, setReload, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => { postData("/postData/event-add",{dateOfEvent, employees, institutionId, programId, howManyParticipiants, howManyPrograms, differentNameProgram}, null, setReload, setModal, true)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }
@@ -171,7 +178,7 @@ const SelectItem = props => {
 
 const SelectEmployee = props => {
     return (<select name="employeeId" className="employeeId" onChange={props.handleChange}>
-    <option disabled selected>-- Wybierz pracownika nr. {props.i+1} --</option>
+    <option disabled selected id="firstOptionEmployee">-- Wybierz pracownika nr. {props.i+1} --</option>
     {props.employeeData.map((el) => {
         return <SelectItem key={el.idEmployee} id={el.idEmployee} name={el.firstName} lastName={el.lastName}/>
     })}

@@ -10,12 +10,13 @@ import ModalComponent from '../components/ModalComponent';
 import { ErrorBox } from "../components/InputErrorBox";
 import { validate } from "../middlewares/validate";
 
-let classesArray = new Array(13).fill(false);
+let classesArray = new Array(16).fill(false);
 
 const FetchPrograms = () => {
     // Posting
     const [name, setName] = useState("");
     const [isLocal, setIsLocal] = useState(false);
+    const [typeOfProgram, setTypeOfProgram] = useState("");
     const [forWho, setForWho] = useState(0);
     const [classes, setClasses] = useState([]);
     const [ifReload, setReload] = useState(false);
@@ -38,6 +39,9 @@ const FetchPrograms = () => {
             case 'isLocal' :
                 if(value === 'lokalnie') setIsLocal(true);
                 else setIsLocal(false);
+                break;
+            case 'typeOfProgram' :
+                setTypeOfProgram(value);
                 break;
             case 'forWho' : 
                 if(value === 'uczniowie') {
@@ -73,11 +77,12 @@ const FetchPrograms = () => {
     const handleReset = () => {
         setModal(false);
         setName("");
+        setTypeOfProgram("");
         setCheckboxesVisible(false);
         setForWho(0)
         setIsLocal(false)
         setClasses([]);
-        classesArray = new Array(13).fill(false);
+        classesArray = new Array(16).fill(false);
         document.querySelector('form').reset();
     }
 
@@ -112,6 +117,7 @@ const FetchPrograms = () => {
                         <option value="teren">teren</option>
                         <option value="lokalnie">lokalnie</option>
                     </select>
+                    <input type="text" onChange={handleChange} name="typeOfProgram" id="typeOfProgram" placeholder="Rodzaj programu.."/>
                     <select onChange={handleChange} name="forWho" id="forWho">
                         <option disabled selected value='niepoprawna wartosc'>-- Wybierz dla kogo -- </option>
                         <option value="rodzice">rodzice</option>
@@ -181,13 +187,25 @@ const FetchPrograms = () => {
                         </div>
 
                         <div>
-                            <label for="class13">Klasa 5 (liceum, technikum)</label>
+                            <label for="class13">Klasa 5 (technikum)</label>
                             <input type="checkbox" id="class13" name="class13" value="12" onChange={handleCheckBox}/>
+                        </div>
+                        <div>
+                            <label for="class14">PP (Przedszkole)</label>
+                            <input type="checkbox" id="class14" name="class14" value="13" onChange={handleCheckBox}/>
+                        </div>
+                        <div>
+                            <label for="class15">0-3 Podstawowka</label>
+                            <input type="checkbox" id="class15" name="class15" value="14" onChange={handleCheckBox}/>
+                        </div>
+                        <div>
+                            <label for="class16">4-6 (Podstawowka)</label>
+                            <input type="checkbox" id="class16" name="class16" value="15" onChange={handleCheckBox}/>
                         </div>
                     </div>
                     : ""}
 
-                    <AddButton to="#" onClick={() => {postData("/postData/program-add",{name, isLocal, forWho, classes}, null, setReload, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => {postData("/postData/program-add",{name, typeOfProgram, isLocal, forWho, classes}, null, setReload, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
                     {/* <AddButton style={{margin: '1rem'}} to="#" onClick={() => {handleReset()}}>Resetuj</AddButton> */}
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>

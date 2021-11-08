@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export const postData = async (url, data, setter, setReload, setModal, isAddedSuccessfully) => {
+export const postData = async (url, data, setter, setReload, setModal, reloadPage) => {
+    // console.log(data);
     axios({
         method: 'post',
         url,
@@ -10,6 +11,9 @@ export const postData = async (url, data, setter, setReload, setModal, isAddedSu
         },
         data
     }).then(res => {
+        if(reloadPage) {
+            window.location.reload();
+        }
         if(setReload) {
            setReload(true);
         } 

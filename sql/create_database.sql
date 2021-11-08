@@ -7,7 +7,7 @@ CREATE TABLE "institution" (
 	"postalCode" varchar(10) NOT NULL,
 	"address" varchar(255) NOT NULL,
 	"telephone" varchar(30) NOT NULL,
-	"fax" varchar(30) NULL,
+	"fax" varchar(30),
 	CONSTRAINT "institution_pk" PRIMARY KEY ("idInstitution")
 ) WITH (
   OIDS=FALSE
@@ -32,6 +32,7 @@ CREATE TABLE "programs" (
 	"idProgram" serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"isLocal" BOOLEAN NOT NULL,
+	"typeOfProgram" TEXT,
 	"forWho" int NOT NULL,
 	"classes" TEXT NULL,
 	CONSTRAINT "programs_pk" PRIMARY KEY ("idProgram")
@@ -48,7 +49,6 @@ CREATE TABLE "programEvent" (
 	"employees" TEXT NOT NULL,
 	"institutionId" int NOT NULL,
 	"programId" int NOT NULL,
-	"typeOfProgram" TEXT,
 	"howManyParticipiants" int NOT NULL,
 	"howManyPrograms" int NOT NULL,
 	"differentNameProgram" TEXT,
