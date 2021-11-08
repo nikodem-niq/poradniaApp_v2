@@ -7,6 +7,9 @@ import TableData from "../components/TableData";
 import { fetchData } from "../middlewares/fetchData";
 import { postData } from "../middlewares/postData";
 import ModalComponent from "../components/ModalComponent";
+import { validate } from "../middlewares/validate";
+import { ErrorBox } from "../components/InputErrorBox";
+
 
 
 
@@ -52,6 +55,16 @@ const AddInstitution = props => {
     const [fax, setFax] = useState("");
 
     const [isModal, setModal] = useState(false);
+    const [errors, setErrors] = useState({
+        nameOfInstitution : '',
+        email : '',
+        city : '',
+        postalCode : '',
+        community : '',
+        address : '',
+        telephone : '',
+        fax : ''
+    })
 
     const handleReset = () => {
             setModal(false);
@@ -68,10 +81,10 @@ const AddInstitution = props => {
 
     const handleChange = (event) => {
         const { value, name } = event.target;
+        validate(name,value,errors,setErrors)
         switch(name) {
             case 'nameOfInstitution' : 
                 setNameOfInstitution(value);
-                console.log(nameOfInstitution)
                 break;
             case 'email' :
                 setEmail(value);
@@ -95,15 +108,13 @@ const AddInstitution = props => {
                 setFax(value);
                 break;
             default:
-                console.log('bad selector - handle change');
                 break;
         }
     }
 
-    let isFormValid = () =>{
-        let isValid = nameOfInstitution !== '' && email !== '' && city !== '' && postalCode  !== '' && community !== '' && address !== '' && telephone !== '' 
+    const isFormValid = () =>{
+        let isValid = errors.nameOfInstitution === '' && errors.email === '' && errors.city === '' && errors.postalCode  === '' && errors.community === '' && errors.address === '' && errors.telephone === '' 
         return isValid ? '' : 'disabled';
-
     }
 
     return(
@@ -111,18 +122,24 @@ const AddInstitution = props => {
             <Navbar/>
             <InnerWrapperTwo>
                 <Form>
-                    {console.log(isModal)}
                     <ModalComponent setModal={isModal} name={nameOfInstitution} handleReset={handleReset}/>
                     <h1>Formularz dodania nowej placówki</h1>
                     <input type="text" onChange={handleChange} name="nameOfInstitution" id="nameOfInstitution" placeholder="Nazwa placówki.."/>
+                    {errors.nameOfInstitution !== ''  ? <ErrorBox>{errors.nameOfInstitution}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="email" id="email" placeholder="Email placówki.."/>
+                    {errors.email !== ''  ? <ErrorBox>{errors.email}</ErrorBox> : ''}
                     <div>
                         <input type="text" onChange={handleChange} name="city" id="city" placeholder="Miejscowość.."/>
                         <input type="text" onChange={handleChange} name="postalCode" id="postalCode" placeholder="Kod pocztowy.."/>
                     </div>
+                        {errors.city !== ''  ? <ErrorBox>{errors.city}</ErrorBox> : ''} <br/>
+                        {errors.postalCode !== ''  ? <ErrorBox>{errors.postalCode}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="community" id="community" placeholder="Gmina.."/>
+                    {errors.community !== ''  ? <ErrorBox>{errors.community}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="address" id="address" placeholder="Adres placówki.."/>
+                    {errors.address !== ''  ? <ErrorBox>{errors.address}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="telephone" id="telephone" placeholder="Telefon placówki.."/>
+                    {errors.telephone !== ''  ? <ErrorBox>{errors.telephone}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="fax" id="fax" placeholder="FAX placówki.. (nie jest konieczny)"/>
                     <AddButton to="#" onClick={() => {postData("/postData/institution-add",{nameOfInstitution, email, city, postalCode, community, address, telephone, fax},null,props.ifReloadData, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}} >Dodaj</AddButton>
 

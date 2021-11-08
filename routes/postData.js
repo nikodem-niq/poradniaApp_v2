@@ -14,7 +14,7 @@ const pool = new pg.Pool({
 
 router.post('/institution-add', verifyToken, (req,res,next) => {
   const { nameOfInstitution, email, city, community, postalCode, address, telephone, fax } = req.body;
-  if(!(nameOfInstitution && email && city && community && postalCode && address && telephone && fax)) {
+  if(!(nameOfInstitution && email && city && community && postalCode && address && telephone)) {
     res.status(403).json({message: "Invalid parameters"});
   } else {    
     pool.connect().then(client => {
@@ -183,8 +183,12 @@ router.post('/search', verifyToken, async (req,res,next) => {
       }
     }
       // General Query
-      if(firstDate && secondDate) {
-        query += `AND "dateOfEvent" >= '${firstDate}' AND "dateOfEvent" <= '${secondDate}' `
+      if(firstDate) {
+        query += `AND "dateOfEvent" >= '${firstDate}' `
+      }
+
+      if(secondDate) {
+        query += `AND "dateOfEvent" <= '${secondDate}' `
       }
   
       if(employees) {
@@ -229,12 +233,20 @@ router.post('/search', verifyToken, async (req,res,next) => {
         query += `AND LOWER("typeOfProgram") LIKE LOWER('%${typeOfProgram}%') `
       }
   
-      if(firstParticipiants && secondParticipiants) {
-        query += `AND "howManyParticipiants" >= ${firstParticipiants} AND "howManyParticipiants" <= ${secondParticipiants} `
+      if(firstParticipiants) {
+        query += `AND "howManyParticipiants" >= ${firstParticipiants} `
+      }
+
+      if(secondParticipiants) {
+        query += `AND "howManyParticipiants" <= ${secondParticipiants} `
       }
   
-      if(firstPrograms && secondPrograms) {
-        query += `AND "howManyPrograms" >= ${firstPrograms} AND "howManyPrograms" <= ${secondPrograms} `
+      if(firstPrograms) {
+        query += `AND "howManyPrograms" >= ${firstPrograms} `
+      }
+
+      if(secondPrograms) {
+        query += `AND "howManyPrograms" <= ${secondPrograms} `
       }
   
       if(differentNameProgram) {
@@ -250,6 +262,7 @@ router.post('/search', verifyToken, async (req,res,next) => {
         query += `)`
       }
   
+      console.log(query)
       const finalQuery = await client.query(query);
       res.status(200).json(finalQuery.rows);
   

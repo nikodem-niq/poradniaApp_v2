@@ -7,6 +7,8 @@ import TableData from "../components/TableData";
 import { fetchData } from "../middlewares/fetchData";
 import { postData } from "../middlewares/postData";
 import ModalComponent from '../components/ModalComponent';
+import { ErrorBox } from "../components/InputErrorBox";
+import { validate } from "../middlewares/validate";
 
 let classesArray = new Array(13).fill(false);
 
@@ -21,9 +23,14 @@ const FetchPrograms = () => {
     const [areCheckboxesVisible, setCheckboxesVisible] = useState(false);
 
     const [isModal, setModal] = useState(false);
+    const [errors, setErrors] = useState({
+        nameOfProgram : '',
+
+    })
 
     const handleChange = (event) => {
         const { value, name } = event.target;
+        validate(name,value,errors,setErrors)
         switch(name) {
             case 'nameOfProgram' : 
                 setName(value);
@@ -86,7 +93,7 @@ const FetchPrograms = () => {
     }, [name, ifReload])
 
     let isFormValid = () =>{
-        let isValid = name !== ''; 
+        let isValid = errors.nameOfProgram === ''; 
         return isValid ? '' : 'disabled';
 
     }
@@ -99,6 +106,7 @@ const FetchPrograms = () => {
                     <ModalComponent setModal={isModal} name={name} handleReset={handleReset}/>
                     <h1>Formularz dodania nowego programu</h1>
                     <input type="text" onChange={handleChange} name="nameOfProgram" id="nameOfProgram" placeholder="Nazwa programu.."/>
+                    {errors.nameOfProgram !== ''  ? <ErrorBox>{errors.nameOfProgram}</ErrorBox> : ''}
                     <select onChange={handleChange} name="isLocal" id="isLocal">
                         <option disabled selected value='niepoprawna wartosc'>-- Wybierz lokalnie/teren -- </option>
                         <option value="teren">teren</option>

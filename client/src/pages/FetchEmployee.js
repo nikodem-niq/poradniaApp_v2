@@ -7,6 +7,9 @@ import TableData from "../components/TableData";
 import { fetchData } from "../middlewares/fetchData";
 import { postData } from "../middlewares/postData";
 import ModalComponent from "../components/ModalComponent";
+import { validate } from "../middlewares/validate";
+import { ErrorBox } from "../components/InputErrorBox";
+
 
 
 const FetchEmployee = () => {
@@ -53,12 +56,19 @@ const AddEmployee = props => {
     const [firstName, setFirstName] = useState("");
     const [secondName, setSecondName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [age, setAge] = useState("");
+    const [age, setAge] = useState(0);
 
     const [isModal, setModal] = useState(false);
+    const [errors, setErrors] = useState({
+        firstName : '',
+        secondName : '',
+        lastName : '',
+        age : '',
+    })
 
     const handleChange = (event) => {
         const { value, name } = event.target;
+        validate(name,value,errors,setErrors)
         switch(name) {
             case 'firstName' : 
                 setFirstName(value);
@@ -88,7 +98,7 @@ const AddEmployee = props => {
     }
 
     const isFormValid = () =>{
-        let isValid = firstName != '' && lastName != '' && age != '';
+        let isValid = errors.firstName === '' && errors.lastName === '' && errors.age === '';
         return isValid ? '' : 'disabled';
 
     }
@@ -101,9 +111,13 @@ const AddEmployee = props => {
                     <ModalComponent setModal={isModal} name={`${firstName} ${lastName}`} handleReset={handleReset}/>
                     <h1>Formularz dodania nowego pracownika</h1>
                     <input type="text" onChange={handleChange} name="firstName" id="firstName" placeholder="Imię pracownika.."/>
+                    {errors.firstName !== ''  ? <ErrorBox>{errors.firstName}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="secondName" id="secondName" placeholder="Drugie imię pracownika.. (nie jest konieczne)"/>
+                    {errors.secondName !== ''  ? <ErrorBox>{errors.secondName}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="lastName" id="lastName" placeholder="Nazwisko.."/>
+                    {errors.lastName !== ''  ? <ErrorBox>{errors.lastName}</ErrorBox> : ''}
                     <input type="number" onChange={handleChange} name="age" id="age" placeholder="Wiek"/>
+                    {errors.age !== ''  ? <ErrorBox>{errors.age}</ErrorBox> : ''}
                     <AddButton to="#" onClick={() => {postData("/postData/employee-add",{firstName, secondName, lastName, age},null,props.ifReloadData, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>

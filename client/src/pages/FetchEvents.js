@@ -7,6 +7,8 @@ import { OuterWrapper } from "../components/OuterWrapper";
 import TableData from "../components/TableData";
 import { postData } from "../middlewares/postData";
 import ModalComponent from "../components/ModalComponent";
+import { ErrorBox } from "../components/InputErrorBox";
+import { validate } from "../middlewares/validate";
 
 const employeesNames = [];
 
@@ -24,11 +26,18 @@ const FetchEvents = () => {
     const [employeeCount, setEmployeeCount] = useState(0);
 
     const [ifReload, setReload] = useState(false);
+    const [errors, setErrors] = useState({
+        dateOfEvent : '',
+        howManyParticipiants : '',
+        howManyPrograms : '',
+    })
 
 
 
 
     const handleChange = (event) => {
+        validate(event.target.name,event.target.value,errors,setErrors)
+
         if(event.target.name == 'employeeId') {
             employeesNames.push(event.target.value);
             const uniqueNames = Array.from(new Set(employeesNames)).join(', ');
@@ -102,7 +111,7 @@ const FetchEvents = () => {
     }, [ifReload])
 
     const isFormValid = () =>{
-        let isValid = dateOfEvent !== '' && employees !== '' && institutionId !== '' && programId !== ''; 
+        let isValid = errors.dateOfEvent === '' && employees !== '' && institutionId !== '' && programId !== '' && errors.howManyParticipiants === '' && errors.howManyPrograms === ''; 
         return isValid ? '' : 'disabled';
     }
 
@@ -116,26 +125,29 @@ const FetchEvents = () => {
                     <h1>Formularz dodania nowego wydarzenia</h1>
                     <label htmlFor="dateOfEvent">Data wizyty</label>
                     <input type="date" onChange={handleChange} name="dateOfEvent" id="dateOfEvent" placeholder="Data wizyty.."/>
+                    {errors.dateOfEvent !== ''  ? <ErrorBox>{errors.dateOfEvent}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="quantityOfWorkers" id="quantityOfWorkers" placeholder="Ilu pracownikow w wydarzeniu?"/>
 
                     {[...Array(parseInt(employeeCount))].map((v,i) => {
                         return <SelectEmployee i={i} employeeData={employeeData} handleChange={handleChange}/>
                     })}
                     <select name="institutionId" id="institutionId" onChange={handleChange}>
-                        <option>-- Wybierz szkołe --</option>
+                        <option disabled selected>-- Wybierz szkołe --</option>
                         {institutionData.map((el) => {
                             return <SelectItem key={el.idInstitution} id={el.idInstitution} name={el.name} community={el.community}/>
                         })}
                     </select>
                     <select name="programsId" id="programsId" onChange={handleChange}>
-                        <option>-- Wybierz program --</option>
+                        <option disabled selected>-- Wybierz program --</option>
                         {programsData.map((el) => {
                             return <SelectItem key={el.idProgram} id={el.idProgram} name={el.name}/>
                         })}
                     </select>
                     <input type="text" onChange={handleChange} name="typeOfProgram" id="typeOfProgram" placeholder="Rodzaj zajęć.."/>
                     <input type="number" onChange={handleChange} name="howManyParticipiants" id="howManyParticipiants" placeholder="Ilu uczestników.."/>
+                    {errors.howManyParticipiants !== ''  ? <ErrorBox>{errors.howManyParticipiants}</ErrorBox> : ''}
                     <input type="number" onChange={handleChange} name="howManyPrograms" id="howManyPrograms" placeholder="Ile form pomocy.."/>
+                    {errors.howManyPrograms !== ''  ? <ErrorBox>{errors.howManyPrograms}</ErrorBox> : ''}
                     <input type="text" onChange={handleChange} name="differentNameProgram" id="differentNameProgram" placeholder="Inna nazwa programu.."/>
 
                     <AddButton to="#" onClick={() => { postData("/postData/event-add",{dateOfEvent, employees, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram}, null, setReload, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
@@ -159,7 +171,7 @@ const SelectItem = props => {
 
 const SelectEmployee = props => {
     return (<select name="employeeId" className="employeeId" onChange={props.handleChange}>
-    <option>-- Wybierz pracownika nr. {props.i+1} --</option>
+    <option disabled selected>-- Wybierz pracownika nr. {props.i+1} --</option>
     {props.employeeData.map((el) => {
         return <SelectItem key={el.idEmployee} id={el.idEmployee} name={el.firstName} lastName={el.lastName}/>
     })}
