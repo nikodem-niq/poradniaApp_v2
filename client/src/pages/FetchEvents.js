@@ -5,8 +5,8 @@ import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import { OuterWrapper } from "../components/OuterWrapper";
 import TableData from "../components/TableData";
-import { fetchData } from "../middlewares/fetchData";
 import { postData } from "../middlewares/postData";
+import ModalComponent from "../components/ModalComponent";
 
 const employeesNames = [];
 
@@ -65,6 +65,22 @@ const FetchEvents = () => {
     const [employeeData, setEmployeeData] = useState([]);
     const [programsData, setProgramsData] = useState([]);
 
+    const [isModal, setModal] = useState(false);
+
+    const handleReset = () => {
+        setModal(false);
+        setDateOfEvent("");
+        setEmployee("");
+        employeesNames.splice(0,employeesNames.length);
+        setInstitutionId("");
+        setProgramId("");
+        setTypeOfProgram("");
+        setHowManyParticipiants("");
+        setHowManyPrograms("");
+        setDifferentNameProgram("");
+        document.querySelector('form').reset();
+    }
+
     useEffect(() => {
         const endpoints = [
             '/fetchData/institution-get',
@@ -86,9 +102,8 @@ const FetchEvents = () => {
     }, [ifReload])
 
     const isFormValid = () =>{
-        let isValid = dateOfEvent !== '' && employees !== '' && institutionId !== '' && programId !== '' && typeOfProgram !== '' && howManyParticipiants !== '' && howManyPrograms  !== '' && differentNameProgram !== ''; 
+        let isValid = dateOfEvent !== '' && employees !== '' && institutionId !== '' && programId !== ''; 
         return isValid ? '' : 'disabled';
-
     }
 
 
@@ -97,6 +112,7 @@ const FetchEvents = () => {
             <Navbar/>
             <InnerWrapper>
             <Form>
+                    <ModalComponent setModal={isModal} name={`Wydarzenie w dniu: ${dateOfEvent}`} handleReset={handleReset}/>
                     <h1>Formularz dodania nowego wydarzenia</h1>
                     <label htmlFor="dateOfEvent">Data wizyty</label>
                     <input type="date" onChange={handleChange} name="dateOfEvent" id="dateOfEvent" placeholder="Data wizyty.."/>
@@ -122,7 +138,7 @@ const FetchEvents = () => {
                     <input type="number" onChange={handleChange} name="howManyPrograms" id="howManyPrograms" placeholder="Ile form pomocy.."/>
                     <input type="text" onChange={handleChange} name="differentNameProgram" id="differentNameProgram" placeholder="Inna nazwa programu.."/>
 
-                    <AddButton to="#" onClick={() => { postData("/postData/event-add",{dateOfEvent, employees, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram}, null, setReload)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => { postData("/postData/event-add",{dateOfEvent, employees, institutionId, programId, typeOfProgram, howManyParticipiants, howManyPrograms, differentNameProgram}, null, setReload, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }

@@ -7,7 +7,7 @@ CREATE TABLE "institution" (
 	"postalCode" varchar(10) NOT NULL,
 	"address" varchar(255) NOT NULL,
 	"telephone" varchar(30) NOT NULL,
-	"fax" varchar(30) NOT NULL,
+	"fax" varchar(30) NULL,
 	CONSTRAINT "institution_pk" PRIMARY KEY ("idInstitution")
 ) WITH (
   OIDS=FALSE

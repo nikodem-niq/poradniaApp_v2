@@ -6,6 +6,7 @@ import { OuterWrapper } from "../components/OuterWrapper";
 import TableData from "../components/TableData";
 import { fetchData } from "../middlewares/fetchData";
 import { postData } from "../middlewares/postData";
+import ModalComponent from '../components/ModalComponent';
 
 let classesArray = new Array(13).fill(false);
 
@@ -18,6 +19,8 @@ const FetchPrograms = () => {
     const [ifReload, setReload] = useState(false);
 
     const [areCheckboxesVisible, setCheckboxesVisible] = useState(false);
+
+    const [isModal, setModal] = useState(false);
 
     const handleChange = (event) => {
         const { value, name } = event.target;
@@ -61,11 +64,13 @@ const FetchPrograms = () => {
     }
 
     const handleReset = () => {
-        setClasses([]);
+        setModal(false);
         setName("");
         setCheckboxesVisible(false);
         setForWho(0)
         setIsLocal(false)
+        setClasses([]);
+        classesArray = new Array(13).fill(false);
         document.querySelector('form').reset();
     }
 
@@ -91,18 +96,19 @@ const FetchPrograms = () => {
             <Navbar/>
             <InnerWrapper>
             <Form>
+                    <ModalComponent setModal={isModal} name={name} handleReset={handleReset}/>
                     <h1>Formularz dodania nowego programu</h1>
                     <input type="text" onChange={handleChange} name="nameOfProgram" id="nameOfProgram" placeholder="Nazwa programu.."/>
                     <select onChange={handleChange} name="isLocal" id="isLocal">
-                        <option value='niepoprawna wartosc'>-- Wybierz lokalnie/teren -- </option>
-                        <option value="lokalnie">lokalnie</option>
+                        <option disabled selected value='niepoprawna wartosc'>-- Wybierz lokalnie/teren -- </option>
                         <option value="teren">teren</option>
+                        <option value="lokalnie">lokalnie</option>
                     </select>
                     <select onChange={handleChange} name="forWho" id="forWho">
-                        <option value='niepoprawna wartosc'>-- Wybierz dla kogo -- </option>
-                        <option value="uczniowie">uczniowie</option>
+                        <option disabled selected value='niepoprawna wartosc'>-- Wybierz dla kogo -- </option>
                         <option value="rodzice">rodzice</option>
                         <option value="nauczyciele">nauczyciele</option>
+                        <option value="uczniowie">uczniowie</option>
                     </select>
                     {areCheckboxesVisible ? 
                     <div id="checkboxDiv">
@@ -173,8 +179,8 @@ const FetchPrograms = () => {
                     </div>
                     : ""}
 
-                    <AddButton to="#" onClick={() => {postData("/postData/program-add",{name, isLocal, forWho, classes}, null, setReload)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
-                    <AddButton style={{margin: '1rem'}} to="#" onClick={() => {handleReset()}}>Resetuj</AddButton>
+                    <AddButton to="#" onClick={() => {postData("/postData/program-add",{name, isLocal, forWho, classes}, null, setReload, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    {/* <AddButton style={{margin: '1rem'}} to="#" onClick={() => {handleReset()}}>Resetuj</AddButton> */}
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }

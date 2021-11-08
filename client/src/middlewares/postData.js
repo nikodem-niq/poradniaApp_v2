@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const postData = (url, data, setter, setReload) => {
+export const postData = async (url, data, setter, setReload, setModal, isAddedSuccessfully) => {
     axios({
         method: 'post',
         url,
@@ -16,6 +16,10 @@ export const postData = (url, data, setter, setReload) => {
         if(setter) {
             setter(res.data);
         }
+        if(setModal) {
+            setModal(true)
+        }
+
     }).catch(err => {
         console.log(err.response.data)
     });

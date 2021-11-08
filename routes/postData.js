@@ -95,165 +95,169 @@ router.post('/search', verifyToken, async (req,res,next) => {
   // Querying 
   const { firstDate, secondDate, employees, nameOfInstitution, community, nameOfProgram, typeOfProgram, firstParticipiants, secondParticipiants, firstPrograms, secondPrograms, differentNameProgram, classes } = req.body;
   let query = `SELECT * FROM "programEvent" WHERE "idEvent" IS NOT NULL `
-
-  const checkInstitutionsName = async () => {
-    let institutionId = [];
-    // let query = 'SELECT "idInstitution" FROM "institution" WHERE "idInstitution" IS NOT NULL'
-    if(nameOfInstitution) {
-      const institutionQuery = await client.query(`SELECT "idInstitution" FROM "institution" WHERE LOWER(name) LIKE LOWER('%${nameOfInstitution}%')`);
-        if(institutionQuery.rowCount > 0) {
-          for(let i=0; i<institutionQuery.rowCount; i++) {
-            institutionId.push(institutionQuery.rows[i].idInstitution)
+  try {
+    const checkInstitutionsName = async () => {
+      let institutionId = [];
+      // let query = 'SELECT "idInstitution" FROM "institution" WHERE "idInstitution" IS NOT NULL'
+      if(nameOfInstitution) {
+        const institutionQuery = await client.query(`SELECT "idInstitution" FROM "institution" WHERE LOWER(name) LIKE LOWER('%${nameOfInstitution}%')`);
+          if(institutionQuery.rowCount > 0) {
+            for(let i=0; i<institutionQuery.rowCount; i++) {
+              institutionId.push(institutionQuery.rows[i].idInstitution)
+              }
+              if(institutionId.length > 0) {
+                return institutionId
+              } else { 
+                return false;
+              }
             }
-            if(institutionId.length > 0) {
-              return institutionId
-            } else { 
-              return false;
-            }
-          }
-          // client.release();
-    }
-  }
-
-  const checkInstitutionsCommunity = async () => {
-    let institutionId = [];
-    // let query = 'SELECT "idInstitution" FROM "institution" WHERE "idInstitution" IS NOT NULL'
-    if(community) {
-      const institutionQuery = await client.query(`SELECT "idInstitution" FROM "institution" WHERE LOWER(community) LIKE LOWER('%${community}%')`);
-      if(institutionQuery.rowCount > 0) {
-          for(let i=0; i<institutionQuery.rowCount; i++) {
-            institutionId.push(institutionQuery.rows[i].idInstitution)
-            }
-            if(institutionId.length > 0) {
-              return institutionId
-            } else { 
-              return false;
-            }
-          } else {
-            return false;
-          }
-          // client.release();
-    }
-  }
-
-  const checkPrograms = async () => {
-    let programsId = [];
-    if(nameOfProgram) {
-      const programQuery = await client.query(`SELECT "idProgram" FROM "programs" WHERE LOWER(name) LIKE LOWER('%${nameOfProgram}%')`);
-        if(programQuery.rowCount > 0) {
-          for(let i=0; i<programQuery.rowCount; i++) {
-            programsId.push(programQuery.rows[i].idProgram)
-            }
-            if(programsId.length > 0) {
-              return programsId
-            } else { 
-              return false;
-            }
-          }
-          // client.release();
-    }
-  }
-
-  const checkClasses = async () => {
-    if(classes) {
-      let indexOfClass = [];
-      const reqClasses = classes.split(',');
-      for(let i=0; i<13; i++) {
-        if(reqClasses[i] == 'true') {
-          indexOfClass.push(i);
-        }
+            // client.release();
       }
-
-      const programQuery = await client.query(`SELECT "idProgram",classes FROM "programs"`);
-      let same = [];
-
-      if(indexOfClass) {
-        for(let j=0; j<programQuery.rowCount; j++) {
-          for(let a=0; a<indexOfClass.length; a++) {
-            if(programQuery.rows[j].classes.split(',')[indexOfClass[a]] == 'true') {
-              if(!same.includes(programQuery.rows[j].idProgram)) {
-                same.push(programQuery.rows[j].idProgram);
+    }
+  
+    const checkInstitutionsCommunity = async () => {
+      let institutionId = [];
+      // let query = 'SELECT "idInstitution" FROM "institution" WHERE "idInstitution" IS NOT NULL'
+      if(community) {
+        const institutionQuery = await client.query(`SELECT "idInstitution" FROM "institution" WHERE LOWER(community) LIKE LOWER('%${community}%')`);
+        if(institutionQuery.rowCount > 0) {
+            for(let i=0; i<institutionQuery.rowCount; i++) {
+              institutionId.push(institutionQuery.rows[i].idInstitution)
+              }
+              if(institutionId.length > 0) {
+                return institutionId
+              } else { 
+                return false;
+              }
+            } else {
+              return false;
+            }
+            // client.release();
+      }
+    }
+  
+    const checkPrograms = async () => {
+      let programsId = [];
+      if(nameOfProgram) {
+        const programQuery = await client.query(`SELECT "idProgram" FROM "programs" WHERE LOWER(name) LIKE LOWER('%${nameOfProgram}%')`);
+          if(programQuery.rowCount > 0) {
+            for(let i=0; i<programQuery.rowCount; i++) {
+              programsId.push(programQuery.rows[i].idProgram)
+              }
+              if(programsId.length > 0) {
+                return programsId
+              } else { 
+                return false;
+              }
+            }
+            // client.release();
+      }
+    }
+  
+    const checkClasses = async () => {
+      if(classes) {
+        let indexOfClass = [];
+        const reqClasses = classes.split(',');
+        for(let i=0; i<13; i++) {
+          if(reqClasses[i] == 'true') {
+            indexOfClass.push(i);
+          }
+        }
+  
+        const programQuery = await client.query(`SELECT "idProgram",classes FROM "programs"`);
+        let same = [];
+  
+        if(indexOfClass) {
+          for(let j=0; j<programQuery.rowCount; j++) {
+            for(let a=0; a<indexOfClass.length; a++) {
+              if(programQuery.rows[j].classes.split(',')[indexOfClass[a]] == 'true') {
+                if(!same.includes(programQuery.rows[j].idProgram)) {
+                  same.push(programQuery.rows[j].idProgram);
+                }
               }
             }
           }
+  
+          return same;
         }
-
-        return same;
       }
     }
+      // General Query
+      if(firstDate && secondDate) {
+        query += `AND "dateOfEvent" >= '${firstDate}' AND "dateOfEvent" <= '${secondDate}' `
+      }
+  
+      if(employees) {
+        query += `AND LOWER(employees) LIKE LOWER('%${employees}%') `
+      }
+  
+      if(checkInstitutionsName()) {
+        let institutions = await checkInstitutionsName();
+        if(institutions) {
+          query += `AND ( `
+          for(let i=0; i<institutions.length; i++) {
+            query += `${institutions.length > 1 && i != 0 ? 'OR ' : ''}"institutionId" = ${institutions[i]} `
+          }
+          query += `)`
+        } 
+      }
+  
+      if(checkInstitutionsCommunity()) {
+        let institutions = await checkInstitutionsCommunity();
+  
+        if(community && institutions) {
+          query += ` AND ( `
+          for(let i=0; i<institutions.length; i++) {
+            query += `${institutions.length > 1 && i != 0 ? 'OR ' : ''}"institutionId" = ${institutions[i]} `
+          }
+          query += `)`
+        } 
+      }
+  
+      if(checkPrograms()) {
+        let programs = await checkPrograms();
+        if(programs) {
+          query += `AND ( `
+          for(let i=0; i<programs.length; i++) {
+            query += `${programs.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${programs[i]} `
+          }
+          query += `)`
+        } 
+      }
+  
+      if(typeOfProgram) {
+        query += `AND LOWER("typeOfProgram") LIKE LOWER('%${typeOfProgram}%') `
+      }
+  
+      if(firstParticipiants && secondParticipiants) {
+        query += `AND "howManyParticipiants" >= ${firstParticipiants} AND "howManyParticipiants" <= ${secondParticipiants} `
+      }
+  
+      if(firstPrograms && secondPrograms) {
+        query += `AND "howManyPrograms" >= ${firstPrograms} AND "howManyPrograms" <= ${secondPrograms} `
+      }
+  
+      if(differentNameProgram) {
+        query += `AND LOWER("differentNameProgram") LIKE LOWER('%${differentNameProgram}%') `
+      }
+  
+      if(classes.length > 0) {
+        const idsOfPrograms = await checkClasses();
+        query += `AND ( `
+        for(let i=0; i<idsOfPrograms.length; i++) {
+          query += `${idsOfPrograms.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${idsOfPrograms[i]} `
+        }
+        query += `)`
+      }
+  
+      const finalQuery = await client.query(query);
+      res.status(200).json(finalQuery.rows);
+  
+      client.release();
+  } catch(err) {
+    res.status(200).json(finalQuery);
   }
-    // General Query
-    if(firstDate && secondDate) {
-      query += `AND "dateOfEvent" >= '${firstDate}' AND "dateOfEvent" <= '${secondDate}' `
-    }
-
-    if(employees) {
-      query += `AND LOWER(employees) LIKE LOWER('%${employees}%') `
-    }
-
-    if(checkInstitutionsName()) {
-      let institutions = await checkInstitutionsName();
-      if(institutions) {
-        query += `AND ( `
-        for(let i=0; i<institutions.length; i++) {
-          query += `${institutions.length > 1 && i != 0 ? 'OR ' : ''}"institutionId" = ${institutions[i]} `
-        }
-        query += `)`
-      } 
-    }
-
-    if(checkInstitutionsCommunity()) {
-      let institutions = await checkInstitutionsCommunity();
-
-      if(community && institutions) {
-        query += ` AND ( `
-        for(let i=0; i<institutions.length; i++) {
-          query += `${institutions.length > 1 && i != 0 ? 'OR ' : ''}"institutionId" = ${institutions[i]} `
-        }
-        query += `)`
-      } 
-    }
-
-    if(checkPrograms()) {
-      let programs = await checkPrograms();
-      if(programs) {
-        query += `AND ( `
-        for(let i=0; i<programs.length; i++) {
-          query += `${programs.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${programs[i]} `
-        }
-        query += `)`
-      } 
-    }
-
-    if(typeOfProgram) {
-      query += `AND LOWER("typeOfProgram") LIKE LOWER('%${typeOfProgram}%') `
-    }
-
-    if(firstParticipiants && secondParticipiants) {
-      query += `AND "howManyParticipiants" >= ${firstParticipiants} AND "howManyParticipiants" <= ${secondParticipiants} `
-    }
-
-    if(firstPrograms && secondPrograms) {
-      query += `AND "howManyPrograms" >= ${firstPrograms} AND "howManyPrograms" <= ${secondPrograms} `
-    }
-
-    if(differentNameProgram) {
-      query += `AND LOWER("differentNameProgram") LIKE LOWER('%${differentNameProgram}%') `
-    }
-
-    if(classes.length > 0) {
-      const idsOfPrograms = await checkClasses();
-      query += `AND ( `
-      for(let i=0; i<idsOfPrograms.length; i++) {
-        query += `${idsOfPrograms.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${idsOfPrograms[i]} `
-      }
-      query += `)`
-    }
-
-    const finalQuery = await client.query(query);
-    res.status(200).json(finalQuery.rows);
-
-    client.release();
+ 
 })
 
 module.exports = router;

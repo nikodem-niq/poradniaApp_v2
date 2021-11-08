@@ -6,7 +6,7 @@ import { OuterWrapper } from "../components/OuterWrapper";
 import TableData from "../components/TableData";
 import { fetchData } from "../middlewares/fetchData";
 import { postData } from "../middlewares/postData";
-
+import ModalComponent from "../components/ModalComponent";
 
 
 const FetchEmployee = () => {
@@ -46,60 +46,7 @@ const InnerWrapper = styled.div`
     height: auto;
 `
 
-const TableWrapper = styled.table`
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    display: flex;
-
-    font-family: Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    table-layout: fixed;
-
-    td, th {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-
-    td {
-        width: 100%;
-    }
-
-    tr:nth-child(even){
-        background-color: #dcdde1;
-        border-left: solid 1px #f5f6fa;
-        border-right: solid 1px #f5f6fa;
-    }
-
-    th:first-child:hover{
-        background-color: red;
-    }
-
-    tr:hover {
-        background-color: #487eb0;
-    }
-
-    th {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        text-align: left;
-        font-size: 0.9rem;
-        background-color: #04AA6D;
-        color: white;
-        width: 100%;
-        height: 50%;
-    }
-
-    tr {
-        width: 90%;
-        display: flex;
-        margin: 0.2rem 0;
-        justify-content: center;
-        align-items: center;
-        background: #f5f6fa;
-    }
-`
+// Employee add component
 
 const AddEmployee = props => {
 
@@ -107,6 +54,8 @@ const AddEmployee = props => {
     const [secondName, setSecondName] = useState("");
     const [lastName, setLastName] = useState("");
     const [age, setAge] = useState("");
+
+    const [isModal, setModal] = useState(false);
 
     const handleChange = (event) => {
         const { value, name } = event.target;
@@ -129,6 +78,15 @@ const AddEmployee = props => {
         }
     };
 
+    const handleReset = () => {
+        setModal(false);
+        setFirstName("");
+        setSecondName("");
+        setLastName("");
+        setAge("");
+        document.querySelector('form').reset();
+    }
+
     const isFormValid = () =>{
         let isValid = firstName != '' && lastName != '' && age != '';
         return isValid ? '' : 'disabled';
@@ -140,12 +98,13 @@ const AddEmployee = props => {
             <Navbar/>
             <InnerWrapperTwo>
                 <Form>
+                    <ModalComponent setModal={isModal} name={`${firstName} ${lastName}`} handleReset={handleReset}/>
                     <h1>Formularz dodania nowego pracownika</h1>
                     <input type="text" onChange={handleChange} name="firstName" id="firstName" placeholder="Imię pracownika.."/>
-                    <input type="text" onChange={handleChange} name="secondName" id="secondName" placeholder="Drugie imię pracownika.."/>
+                    <input type="text" onChange={handleChange} name="secondName" id="secondName" placeholder="Drugie imię pracownika.. (nie jest konieczne)"/>
                     <input type="text" onChange={handleChange} name="lastName" id="lastName" placeholder="Nazwisko.."/>
                     <input type="number" onChange={handleChange} name="age" id="age" placeholder="Wiek"/>
-                    <AddButton to="#" onClick={() => {postData("/postData/employee-add",{firstName, secondName, lastName, age},null,props.ifReloadData)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => {postData("/postData/employee-add",{firstName, secondName, lastName, age},null,props.ifReloadData, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }
@@ -177,12 +136,6 @@ const AddButton = styled(Link)`
     font-size: 18px;
     border: none;
     border-radius: 10px;
-`
-
-const DisabledButton = styled.div`
-    button:disabled {
-        background-color: red;
-     }
 `
 
 const Form = styled.form`
