@@ -16,32 +16,60 @@ const defineForWho = (data,classes) => {
                 for(let i=0; i<classes.length; i++) {
                     if(splittedClass[i] === true || splittedClass[i] === 'true') {
                         switch(i) {
-                            case 8:
-                                classList.push('1 L/T');
+                            case 0:
+                                classList.push('Rok zycia 0-3.');
                                 break;
-                            case 9:
-                                classList.push('2 L/T');
+                            case 1:
+                                classList.push('Przedszkole (PP)')
                                 break;
                             case 10:
-                                classList.push('3 L/T');
-                                break;
+                                classList.push('I Liceum')
+                                break;                                
                             case 11:
-                                classList.push('4 L/T');
-                                break;
+                                classList.push('II Liceum')
+                                break;                                
                             case 12:
-                                classList.push('5 T');
-                                break;
+                                classList.push('III Liceum')
+                                break;                                
                             case 13:
-                                classList.push('PP (Przedszkole)');
-                                break;
+                                classList.push('IV Liceum')
+                                break;     
+
                             case 14:
-                                classList.push('0-3 Podst.');
-                                break;
+                                classList.push('I Technikum')
+                                break;                                
                             case 15:
-                                classList.push('4-6 Podst.');
-                                break;
+                                classList.push('II Technikum')
+                                break;                                
+                            case 16:
+                                classList.push('III Technikum')
+                                break;                                
+                            case 17:
+                                classList.push('IV Technikum')
+                                break;                                
+                            case 18:
+                                classList.push('V Technikum')
+                                break;  
+                                
+                            case 19:
+                                classList.push('I - I Branzowa')
+                                break;                                
+                            case 20:
+                                classList.push('I - II Branzowa')
+                                break;                                
+                            case 21:
+                                classList.push('I - III Branzowa')
+                                break;                                
+                            case 22:
+                                classList.push('II - I Branzowa')
+                                break;                                
+                            case 23:
+                                classList.push('II - II Branzowa')
+                                break;   
+                                
+                                
                             default:
-                                classList.push(`${i+1} pods.`);
+                                classList.push(`${i-1} pods.`);
                                 break;
                         }
                     }
@@ -259,7 +287,6 @@ const TableData = (props) => {
                         <th>Nazwa</th>
                         <th>Lokalnie / teren</th>
                         <th>Rodzaj</th>
-                        <th>Dla kogo</th>
                         <th id="actionsTableHeader">Akcje</th>
 
                     </tr>
@@ -287,10 +314,10 @@ const TableData = (props) => {
                     <th>Gmina</th>
                     <th>Nazwa zajęć</th>
                     <th>Rodzaj zajęć</th>
+                    <th>Dla kogo</th>
                     <th>Liczba uczestników</th>
                     <th>Liczba form pomocy</th>
                     <th>Inna nazwa</th>
-                    <th>Dla kogo?</th>
                     <th id="actionsTableHeader">Akcje</th>
 
     
@@ -319,10 +346,12 @@ const TableData = (props) => {
                         <td>{findInstitution.community}</td>
                         <td>{findProgram.name}</td>
                         <td>{findProgram.typeOfProgram}</td>
+                        <td>{defineForWho(el.forWho, el.classes)}</td>
+                        {/* {console.log(props.forWho)} */}
                         <td>{el.howManyParticipiants}</td>
                         <td>{el.howManyPrograms}</td>
                         <td>{el.differentNameProgram}</td>
-                        <td>{defineForWho(findProgram.forWho, findProgram.classes)}</td>
+                        {/* <td>{defineForWho(findProgram.forWho, findProgram.classes)}</td> */}
                         <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
                         {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
                         <DataButton class="removeBtn" onClick={() => {removeItem(el.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
@@ -382,7 +411,6 @@ const TableItem = props => {
                     <td>{props.name}</td>
                     <td>{props.isLocal ? "lokalnie" : "teren"}</td>
                     <td>{props.typeOfProgram}</td>
-                    <td>{defineForWho(props.forWho, props.classes)}</td>
                     <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
                         {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
                         <DataButton onClick={() => {removeItem(props.id, 'programs')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>

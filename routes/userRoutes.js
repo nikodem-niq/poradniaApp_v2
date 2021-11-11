@@ -29,11 +29,11 @@ router.post('/register', async (req,res,next) => {
                         bcrypt.hash(password, salt, (err, hashed) => {
                             if(err) {
                                 res.status(400).send('err with hash');
-                                client.release();
+                                // client.release();
                             } else {
                                 // Insert user into db
                                 client.query(`INSERT INTO users(login, password, "dateCreated") VALUES('${login}', '${hashed}', 'NOW()')`, (err, response) => {
-                                    client.release();
+                                    // client.release();
                                     const token = jwt.sign({ login }, process.env.SECRET_JWT, { expiresIn: '6h' });
                                     res.status(config.registered.code).json({message: config.registered.message, token})
                                 })
@@ -42,6 +42,8 @@ router.post('/register', async (req,res,next) => {
                     }
                 })
             }
+        }).catch(err => {
+            client.release();
         })
     });
 
@@ -51,6 +53,7 @@ router.post('/register', async (req,res,next) => {
 
 router.post('/auth', (req,res,next) => {
     const { login, password } = req.body;
+
     pool.connect().then(client => {
         client.query(`SELECT 'login','password' FROM "users" WHERE "login" LIKE '${login}'`).then(response => {
             client.release();

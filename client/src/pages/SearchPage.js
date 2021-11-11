@@ -7,7 +7,7 @@ import { OuterWrapper } from "../components/OuterWrapper";
 import TableData from "../components/TableData";
 import { postData } from "../middlewares/postData";
 
-let classesArray = new Array(13).fill(false);
+let classesArray = new Array(24).fill(false);
 const endpoints = [
     '/fetchData/institution-get',
     '/fetchData/employee-get',
@@ -113,6 +113,7 @@ const SearchPage = () => {
             setSecondPrograms(0);
             setDifferentNameProgram('');
             setClasses([]);
+            classesArray = new Array(24).fill(false);
             axios.all(endpoints.map((endpoint) => axios.get(endpoint, {headers: { 'x-access-token' : localStorage.getItem('userToken') }}))).then(
                 axios.spread(( institution, employee, programs, events ) => {
                     setInstitutionData(institution.data.rows);
@@ -139,7 +140,7 @@ const SearchPage = () => {
                     <FormItem what="howManyParticipiants" handleChange={handleChange}/>
                     <FormItem what="howManyPrograms" handleChange={handleChange}/>
                     <FormItem what="differentNameProgram" handleChange={handleChange}/>
-                    <FormItem what="classes" handleCheckBox={handleCheckBox}/>
+                    {/* <FormItem what="classes" handleCheckBox={handleCheckBox}/> */}
                     <div style={{display: 'flex'}}>
                     <AddButton style={{margin: '1rem'}} to="#" onClick={handleSearch}>Szukaj</AddButton>
                     <AddButton style={{margin: '1rem'}} to="#" onClick={handleReset}>Resetuj wyniki</AddButton>
@@ -251,75 +252,149 @@ const FormItem = props => {
                     <input onChange={props.handleChange} type="text" name="differentNameProgram" id="differentNameProgram" placeholder="Wpisz inną nazwe programu (nie musi być pełna)"/>
                 </div>
             )
-        case 'classes':
-            return (
-                    <div id="checkboxDiv">
-                    <div>
-                        <label for="class1">Klasa 1</label>
-                        <input type="checkbox" id="class1" name="class1" value="0" onChange={props.handleCheckBox}/>
-                    </div>
+        // case 'classes':
+        //     return (
+        //         <div id="checkboxDiv">
+        //         <div style={{display: 'flex', alignContent: 'center'}}>
+        //             <h3>Podstawa</h3>
+        //             <div>
+        //                 <label for="beforeSchool1">Rok zycia 0-3</label>
+        //                 <input type="checkbox" id="beforeSchool1" name="beforeSchool1" value="0" onChange={props.handleCheckBox}/>
+        //             </div>
+        //             <div>
+        //                 <label for="beforeSchool2">PP (Przedszkole)</label>
+        //                 <input type="checkbox" id="beforeSchool2" name="beforeSchool2" value="1" onChange={props.handleCheckBox}/>
+        //             </div>
+        //             <div>
+        //                 <label for="class1">Klasa 1</label>
+        //                 <input type="checkbox" id="class1" name="class1" value="2" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class2">Klasa 2</label>
-                        <input type="checkbox" id="class2" name="class2" value="1" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class2">Klasa 2</label>
+        //                 <input type="checkbox" id="class2" name="class2" value="3" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class3">Klasa 3</label>
-                        <input type="checkbox" id="class3" name="class3" value="2" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class3">Klasa 3</label>
+        //                 <input type="checkbox" id="class3" name="class3" value="4" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class4">Klasa 4</label>
-                        <input type="checkbox" id="class4" name="class4" value="3" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class4">Klasa 4</label>
+        //                 <input type="checkbox" id="class4" name="class4" value="5" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class5">Klasa 5</label>
-                        <input type="checkbox" id="class5" name="class5" value="4" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class5">Klasa 5</label>
+        //                 <input type="checkbox" id="class5" name="class5" value="6" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class6">Klasa 6</label>
-                        <input type="checkbox" id="class6" name="class6" value="5" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class6">Klasa 6</label>
+        //                 <input type="checkbox" id="class6" name="class6" value="7" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class7">Klasa 7</label>
-                        <input type="checkbox" id="class7" name="class7" value="6" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class7">Klasa 7</label>
+        //                 <input type="checkbox" id="class7" name="class7" value="8" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class8">Klasa 8</label>
-                        <input type="checkbox" id="class8" name="class8" value="7" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class8">Klasa 8</label>
+        //                 <input type="checkbox" id="class8" name="class8" value="9" onChange={props.handleCheckBox}/>
+        //             </div>
+        //         </div>
+        //         {/* 
+                
+        //         LICEUM:
+                
+        //         */}
+        //         <div style={{display: 'flex', alignContent: 'center'}}>
+        //             <h3>Licea i technika</h3>
+        //             <div>
+        //                 <label for="class9">Klasa 1 (liceum)</label>
+        //                 <input type="checkbox" id="class9" name="class9" value="10" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class9">Klasa 1 (liceum, technikum)</label>
-                        <input type="checkbox" id="class9" name="class9" value="8" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class10">Klasa 2 (liceum)</label>
+        //                 <input type="checkbox" id="class10" name="class10" value="11" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class10">Klasa 2 (liceum, technikum)</label>
-                        <input type="checkbox" id="class10" name="class10" value="9" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class11">Klasa 3 (liceum)</label>
+        //                 <input type="checkbox" id="class11" name="class11" value="12" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class11">Klasa 3 (liceum, technikum)</label>
-                        <input type="checkbox" id="class11" name="class11" value="10" onChange={props.handleCheckBox}/>
-                    </div>
+        //             <div>
+        //                 <label for="class12">Klasa 4 (liceum)</label>
+        //                 <input type="checkbox" id="class12" name="class12" value="13" onChange={props.handleCheckBox}/>
+        //             </div>
 
-                    <div>
-                        <label for="class12">Klasa 4 (liceum, technikum)</label>
-                        <input type="checkbox" id="class12" name="class12" value="11" onChange={props.handleCheckBox}/>
-                    </div>
+        //          {/* 
+                 
+        //         Technikum
+                 
+        //          */}
 
-                    <div>
-                        <label for="class13">Klasa 5 (liceum, technikum)</label>
-                        <input type="checkbox" id="class13" name="class13" value="12" onChange={props.handleCheckBox}/>
-                    </div>
-                </div>
-            )
+        //             <div>
+        //                 <label for="class13">Klasa 1 (technikum)</label>
+        //                 <input type="checkbox" id="class13" name="class13" value="14" onChange={props.handleCheckBox}/>
+        //             </div>                         
+        //             <div>
+        //                 <label for="class14">Klasa 2 (technikum)</label>
+        //                 <input type="checkbox" id="class14" name="class14" value="15" onChange={props.handleCheckBox}/>
+        //             </div>                         
+        //             <div>
+        //                 <label for="class15">Klasa 3 (technikum)</label>
+        //                 <input type="checkbox" id="class15" name="class15" value="16" onChange={props.handleCheckBox}/>
+        //             </div>                         
+        //             <div>
+        //                 <label for="class16">Klasa 4 (technikum)</label>
+        //                 <input type="checkbox" id="class16" name="class16" value="17" onChange={props.handleCheckBox}/>
+        //             </div>                         
+        //             <div>
+        //                 <label for="class17">Klasa 5 (technikum)</label>
+        //                 <input type="checkbox" id="class17" name="class17" value="18" onChange={props.handleCheckBox}/>
+        //             </div>                         
+        //         </div>
+
+        //         {/* 
+                
+        //         BRANZOWE SZKOLY
+                
+        //         */}
+
+        //         <div style={{display: 'flex', alignContent: 'center'}}>
+        //             <h3>Klasy branzowe</h3>
+        //             <div>
+        //                 <label for="class18">Klasa 1, I stopień(branzowa)</label>
+        //                 <input type="checkbox" id="class18" name="class18" value="19" onChange={props.handleCheckBox}/>
+        //             </div>
+
+        //             <div>
+        //                 <label for="class19">Klasa 2, I stopień(branzowa)</label>
+        //                 <input type="checkbox" id="class19" name="class19" value="20" onChange={props.handleCheckBox}/>
+        //             </div>
+
+        //             <div>
+        //                 <label for="class20">Klasa 3, I stopień(branzowa)</label>
+        //                 <input type="checkbox" id="class20" name="class20" value="21" onChange={props.handleCheckBox}/>
+        //             </div>
+
+        //             <div>
+        //                 <label for="class21">Klasa 1, II stopień (branzowa)</label>
+        //                 <input type="checkbox" id="class21" name="class21" value="22" onChange={props.handleCheckBox}/>
+        //             </div>
+
+        //             <div>
+        //                 <label for="class22">Klasa 2, II stopień (branzowa)</label>
+        //                 <input type="checkbox" id="class22" name="class22" value="23" onChange={props.handleCheckBox}/>
+        //             </div>
+        //         </div>
+        //     </div>
+        //     )
         default:
             return 'Wybierz co wyszukać..'
     }
@@ -357,10 +432,23 @@ const Form = styled.form`
             width: 1rem;
         }
 
+        input[type='checkbox'] {
+            padding: 0;
+            margin: 0.5rem 0.5rem;
+        }
+
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
+
+        div {
+            width: 100%;
+            margin: 0 2rem;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            /* justify-content: flex-start; */
+            /* align-items: center; */
+            font-size: 0.9rem;
+        }
     }
 
     label {

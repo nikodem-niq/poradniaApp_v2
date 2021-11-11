@@ -49,12 +49,12 @@ router.post('/employee-add', verifyToken, (req,res,next) => {
 })
 
 router.post('/program-add', verifyToken, (req,res,next) => {
-  const { name, isLocal, typeOfProgram, forWho, classes } = req.body;
+  const { name, isLocal, typeOfProgram } = req.body;
   if(!(name)) {
     res.status(403).json({message: "Invalid parameters"});
   } else {    
     pool.connect().then(client => {
-      const query = `INSERT INTO programs(name, "isLocal", "typeOfProgram", "forWho", "classes") VALUES('${name}', ${isLocal}, '${typeOfProgram}', ${forWho}, '${classes}')`
+      const query = `INSERT INTO programs(name, "isLocal", "typeOfProgram") VALUES('${name}', ${isLocal}, '${typeOfProgram}')`
 
       client.query(query, (err, response) => {
         client.release();
@@ -70,14 +70,12 @@ router.post('/program-add', verifyToken, (req,res,next) => {
 })
 
 router.post('/event-add', verifyToken, (req,res,next) => {
-  const { dateOfEvent, employees, institutionId, programId, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
-  console.log(employees);
-  console.log(howManyParticipiants)
+  const { dateOfEvent, employees, institutionId, programId, forWho, classes, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
   if(!(dateOfEvent)) {
     res.status(403).json({message: "Invalid parameters"});
   } else {    
     pool.connect().then(client => {
-      const query = `INSERT INTO "programEvent"("dateOfEvent", "employees", "institutionId", "programId", "howManyParticipiants", "howManyPrograms", "differentNameProgram") VALUES('${dateOfEvent}', '${employees}', ${institutionId}, ${programId}, ${howManyParticipiants}, ${howManyPrograms}, '${differentNameProgram}')`
+      const query = `INSERT INTO "programEvent"("dateOfEvent", "employees", "institutionId", "programId", "forWho", "classes", "howManyParticipiants", "howManyPrograms", "differentNameProgram") VALUES('${dateOfEvent}', '${employees}', ${institutionId}, ${programId}, ${forWho}, '${classes}', ${howManyParticipiants}, ${howManyPrograms}, '${differentNameProgram}')`
       // console.log(query)
       client.query(query, (err, response) => {
         client.release();
@@ -172,34 +170,37 @@ router.post('/search', verifyToken, async (req,res,next) => {
       }
     }
   
-    const checkClasses = async () => {
-      if(classes) {
-        let indexOfClass = [];
-        const reqClasses = classes.split(',');
-        for(let i=0; i<13; i++) {
-          if(reqClasses[i] == 'true') {
-            indexOfClass.push(i);
-          }
-        }
+    // const checkClasses = async () => {
+    //   if(classes) {
+    //     let indexOfClass = [];
+    //     const reqClasses = classes.split(',');
+    //     for(let i=0; i<reqClasses.length; i++) {
+    //       if(reqClasses[i] == 'true') {
+    //         indexOfClass.push(i);
+    //       }
+    //     }
   
-        const programQuery = await client.query(`SELECT "idProgram",classes FROM "programs"`);
-        let same = [];
+    //     const programQuery = await client.query(`SELECT classes FROM "programEvent"`);
+    //     let same = [];
+
+    //     console.log(same);
   
-        if(indexOfClass) {
-          for(let j=0; j<programQuery.rowCount; j++) {
-            for(let a=0; a<indexOfClass.length; a++) {
-              if(programQuery.rows[j].classes.split(',')[indexOfClass[a]] == 'true') {
-                if(!same.includes(programQuery.rows[j].idProgram)) {
-                  same.push(programQuery.rows[j].idProgram);
-                }
-              }
-            }
-          }
+    //     if(indexOfClass) {
+    //       for(let j=0; j<programQuery.rowCount; j++) {
+    //         for(let a=0; a<indexOfClass.length; a++) {
+    //           if(programQuery.rows[j].classes.split(',')[indexOfClass[a]] == 'true') {
+    //             if(!same.includes(programQuery.rows[j].idProgram)) {
+    //               same.push(programQuery.rows[j].idProgram);
+    //             }
+    //           }
+    //         }
+    //       }
   
-          return same;
-        }
-      }
-    }
+    //       return same;
+    //     }
+    //   }
+    // }
+
       // General Query
       if(firstDate) {
         query += `AND "dateOfEvent" >= '${firstDate}' `
@@ -278,14 +279,15 @@ router.post('/search', verifyToken, async (req,res,next) => {
         query += `AND LOWER("differentNameProgram") LIKE LOWER('%${differentNameProgram}%') `
       }
   
-      if(classes.length > 0) {
-        const idsOfPrograms = await checkClasses();
-        query += `AND ( `
-        for(let i=0; i<idsOfPrograms.length; i++) {
-          query += `${idsOfPrograms.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${idsOfPrograms[i]} `
-        }
-        query += `)`
-      }
+      // if(classes.length > 0) {
+      //   const idsOfPrograms = await checkClasses();
+      //   console.log(idsOfPrograms)
+      // //   query += `AND ( `
+      // //   for(let i=0; i<idsOfPrograms.length; i++) {
+      // //     query += `${idsOfPrograms.length > 1 && i != 0 ? 'OR ' : ''}"programId" = ${idsOfPrograms[i]} `
+      // //   }
+      // //   query += `)`
+      // }
   
       console.log(query)
       const finalQuery = await client.query(query);

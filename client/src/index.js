@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import Login from './pages/AuthSite';
 import Dashboard from './pages/Dashboard';
-import { Switch,BrowserRouter } from 'react-router-dom'
+import { Switch,BrowserRouter, Route } from 'react-router-dom'
 import PrivateRoute from './components/PrivateRoute';
 import Auth from './components/Auth';
 import FetchInstitution from './pages/FetchInstitution';
@@ -18,7 +18,7 @@ const App = () => {
     <BrowserRouter>  
         <Switch>
           <Auth component={Login} path="/login"/>
-          <PrivateRoute component={Dashboard} path="/dashboard"/>
+          {/* <PrivateRoute component={Dashboard} path="/dashboard"/>
           <PrivateRoute component={Dashboard} exact path="/"/>
 
           <PrivateRoute component={FetchInstitution} path="/institution"/>
@@ -26,7 +26,16 @@ const App = () => {
           <PrivateRoute component={FetchPrograms} path="/programs"/>
           <PrivateRoute component={FetchEvents} path="/events"/>
 
-          <PrivateRoute component={SearchPage} path="/search"/>
+          <PrivateRoute component={SearchPage} path="/search"/> */}
+          <Route component={Dashboard} path="/dashboard"/>
+          <Route component={Dashboard} exact path="/"/>
+
+          <Route component={FetchInstitution} path="/institution"/>
+          <Route component={FetchEmployee} path="/employee"/>
+          <Route component={FetchPrograms} path="/programs"/>
+          <Route component={FetchEvents} path="/events"/>
+
+          <Route component={SearchPage} path="/search"/>
 
         </Switch>
     </BrowserRouter>

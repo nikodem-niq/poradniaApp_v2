@@ -10,15 +10,11 @@ import ModalComponent from '../components/ModalComponent';
 import { ErrorBox } from "../components/InputErrorBox";
 import { validate } from "../middlewares/validate";
 
-let classesArray = new Array(16).fill(false);
-
 const FetchPrograms = () => {
     // Posting
     const [name, setName] = useState("");
     const [isLocal, setIsLocal] = useState(false);
     const [typeOfProgram, setTypeOfProgram] = useState("");
-    const [forWho, setForWho] = useState(0);
-    const [classes, setClasses] = useState([]);
     const [ifReload, setReload] = useState(false);
 
     const [areCheckboxesVisible, setCheckboxesVisible] = useState(false);
@@ -43,46 +39,46 @@ const FetchPrograms = () => {
             case 'typeOfProgram' :
                 setTypeOfProgram(value);
                 break;
-            case 'forWho' : 
-                if(value === 'uczniowie') {
-                    setForWho(0);
-                    setCheckboxesVisible(true);
-                }
-                else if(value === 'rodzice') {
-                    setCheckboxesVisible(false);
-                    setForWho(1);
-                }
+            // case 'forWho' : 
+            //     if(value === 'uczniowie') {
+            //         setForWho(0);
+            //         setCheckboxesVisible(true);
+            //     }
+            //     else if(value === 'rodzice') {
+            //         setCheckboxesVisible(false);
+            //         setForWho(1);
+            //     }
                     
-                else if(value === 'nauczyciele') {
-                    setCheckboxesVisible(false);
-                    setForWho(2);
-                }
+            //     else if(value === 'nauczyciele') {
+            //         setCheckboxesVisible(false);
+            //         setForWho(2);
+            //     }
 
-                break;
+            //     break;
             default:
                 break;
         }
     }
 
-    const handleCheckBox = (event) => {
-        const { value, checked } = event.target;
-        if(checked) {
-            classesArray[value] = true;
-        } else {
-            classesArray[value] = false;
-        }
-        setClasses(classesArray.join(','));
-    }
+    // const handleCheckBox = (event) => {
+    //     const { value, checked } = event.target;
+    //     if(checked) {
+    //         classesArray[value] = true;
+    //     } else {
+    //         classesArray[value] = false;
+    //     }
+    //     setClasses(classesArray.join(','));
+    // }
 
     const handleReset = () => {
         setModal(false);
         setName("");
         setTypeOfProgram("");
-        setCheckboxesVisible(false);
-        setForWho(0)
+        // setCheckboxesVisible(false);
+        // setForWho(0)
         setIsLocal(false)
-        setClasses([]);
-        classesArray = new Array(16).fill(false);
+        // setClasses([]);
+        // classesArray = new Array(16).fill(false);
         document.querySelector('form').reset();
     }
 
@@ -118,7 +114,7 @@ const FetchPrograms = () => {
                         <option value="lokalnie">lokalnie</option>
                     </select>
                     <input type="text" onChange={handleChange} name="typeOfProgram" id="typeOfProgram" placeholder="Rodzaj programu.."/>
-                    <select onChange={handleChange} name="forWho" id="forWho">
+                    {/* <select onChange={handleChange} name="forWho" id="forWho">
                         <option disabled selected value='niepoprawna wartosc'>-- Wybierz dla kogo -- </option>
                         <option value="rodzice">rodzice</option>
                         <option value="nauczyciele">nauczyciele</option>
@@ -203,9 +199,9 @@ const FetchPrograms = () => {
                             <input type="checkbox" id="class16" name="class16" value="15" onChange={handleCheckBox}/>
                         </div>
                     </div>
-                    : ""}
+                    : ""} */}
 
-                    <AddButton to="#" onClick={() => {postData("/postData/program-add",{name, typeOfProgram, isLocal, forWho, classes}, null, setReload, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
+                    <AddButton to="#" onClick={() => {postData("/postData/program-add",{name, typeOfProgram, isLocal}, null, setReload, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}}>Dodaj</AddButton>
                     {/* <AddButton style={{margin: '1rem'}} to="#" onClick={() => {handleReset()}}>Resetuj</AddButton> */}
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
@@ -257,17 +253,6 @@ const Form = styled.form`
 
     input::placeholder, select::placeholder {
         font-size: 1rem;
-    }
-
-    #checkboxDiv {
-        input {
-            width: 1rem;
-        }
-
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
     }
 `
 
