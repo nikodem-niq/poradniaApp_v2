@@ -31,6 +31,9 @@ export const removeItem = (id, item, setModal) => {
                 window.location.reload();
             }).catch(err => {
                 setModal(true);
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1000)
             })
             break;
         case 'event':
