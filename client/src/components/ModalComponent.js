@@ -16,12 +16,17 @@ const ModalComponent = props => {
 
     return (
         <section>
-        <Modal visible={isVisible} width="400" height="200" effect="fadeInDown" onClickAway={() => {closeModal(); props.handleReset()}}>
+            {!props.error ? <Modal visible={isVisible} width="400" height="200" effect="fadeInDown" onClickAway={() => {closeModal(); props.handleReset()}}>
             <InnerModal>
-                <h3>Pomyślnie dodano: <br/></h3>{props.name}
+                {props.edit  ? <h3>Pomyślnie zmieniono: <br/>{props.name}</h3> : <h3>Pomyślnie dodano: <br/>{props.name}</h3>} 
                 <CloseButton onClick={() => {closeModal();props.handleReset()}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Zamknij</CloseButton>
             </InnerModal>
-        </Modal>
+        </Modal> : <Modal visible={isVisible} width="400" height="200" effect="fadeInDown" onClickAway={() => {closeModal(); props.handleReset()}}>
+            <InnerModal>
+                <h3 style={{color: 'red', fontWeight: 'bold'}}>Przed usunięciem tego wyniku, usuń wiersze w tabeli WYDARZENIA w których on występuje!</h3>
+                <CloseButton onClick={() => {closeModal()}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Zamknij</CloseButton>
+            </InnerModal>
+        </Modal> }
     </section>
     )
 }

@@ -13,20 +13,13 @@ const pool = new pg.Pool({
 
 router.get('/institution-get', verifyToken, (req,res,next) => {
   pool.connect().then(client => {
-      // Sorting requests
-      const { column, order, limit } = req.query;
-      if(column || order || limit) {
-        let query = `SELECT * FROM institution ORDER BY "${column}" ${order || 'ASC'} LIMIT ${limit || 'ALL'}`;
-        client.query(query).then(response => {
-          client.release();
-          res.status(200).send(response);
-        }).catch(err => {
-          client.release();
-          console.log(err);
-        })
-      } else {
         // Fetch all  
-        const query = `SELECT * FROM institution;`
+        let query;
+        if(req.query.id) {
+          query = `SELECT * FROM institution WHERE "idInstitution" = ${req.query.id}`;
+        } else {
+          query = `SELECT * FROM institution`;
+        }
     
         client.query(query, (err,response) => {
           client.release();
@@ -37,7 +30,6 @@ router.get('/institution-get', verifyToken, (req,res,next) => {
             res.status(200).json(response);
           }
         })
-      }
 
     })
 })

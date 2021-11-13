@@ -5,53 +5,53 @@ import homeImg from '../img/home.png';
 import { Link } from "react-router-dom";
 
 const Navbar = (props) => {
-    const handleHover = (state) => {
-        const el = document.getElementById('homeModal');
-        const elTwo = document.getElementById('logoutModal');
-        switch(state) {
-            case 1:
-                el.style.display = 'flex';
-                break;
-            case 0:
-                el.style.display = 'none';
-                break;
-            case 3:
-                elTwo.style.display = 'flex';
-                break;
-            case 2:
-                elTwo.style.display = 'none';
-        }
-    } 
+    // const handleHover = (state) => {
+    //     const el = document.getElementById('homeModal');
+    //     const elTwo = document.getElementById('logoutModal');
+    //     switch(state) {
+    //         case 1:
+    //             el.style.display = 'flex';
+    //             break;
+    //         case 0:
+    //             el.style.display = 'none';
+    //             break;
+    //         case 3:
+    //             elTwo.style.display = 'flex';
+    //             break;
+    //         case 2:
+    //             elTwo.style.display = 'none';
+    //     }
+    // } 
 
     return(
         <NavWrapper>
             <Link to="/dashboard" style={{textDecoration: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <img  src={homeImg}/>
+                <img  src={homeImg} alt="Home"/>
                 {/* <ImgModal id="homeModal">Strona główna</ImgModal> */}
             </Link>
             <Link to="#" onClick={() => {logoutUser('/login')}} style={{textDecoration: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <img  src={logoutImg}/>
+                <img  src={logoutImg} alt="Logout"/>
                 {/* <ImgModal id="logoutModal">Wyloguj się</ImgModal> */}
             </Link>
         </NavWrapper>
     )
 }
 
-const ImgModal = styled.div`
-    display: flex;
-    margin: 0.5rem 0;
-    border-radius: 10px;
-    width: 4rem;
-    height: 2rem;
-    opacity: 0.7;
-    background-color: black;
-    position: relative;
-    overflow: hidden;
-    font-size: 0.5rem;
-    justify-content: center;
-    align-items: center;
-    color: white;
-`
+// const ImgModal = styled.div`
+//     display: flex;
+//     margin: 0.5rem 0;
+//     border-radius: 10px;
+//     width: 4rem;
+//     height: 2rem;
+//     opacity: 0.7;
+//     background-color: black;
+//     position: relative;
+//     overflow: hidden;
+//     font-size: 0.5rem;
+//     justify-content: center;
+//     align-items: center;
+//     color: white;
+// `
 
 const NavWrapper = styled.nav`
     display: flex;

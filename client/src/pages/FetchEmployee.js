@@ -29,7 +29,7 @@ const FetchEmployee = () => {
 
     const handleStateChange = useCallback (state => {
         setEmployeeData(state);
-    }, [employeeData]);
+    }, []);
 
     return (
         <OuterWrapper>

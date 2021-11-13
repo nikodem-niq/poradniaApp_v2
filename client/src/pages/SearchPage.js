@@ -7,7 +7,7 @@ import { OuterWrapper } from "../components/OuterWrapper";
 import TableData from "../components/TableData";
 import { postData } from "../middlewares/postData";
 
-let classesArray = new Array(24).fill(false);
+// let classesArray = new Array(24).fill(false);
 const endpoints = [
     '/fetchData/institution-get',
     '/fetchData/employee-get',
@@ -54,15 +54,15 @@ const SearchPage = () => {
     const [classes, setClasses] = useState([]);
 
     
-    const handleCheckBox = (event) => {
-        const { value, checked } = event.target;
-        if(checked) {
-            classesArray[value] = true;
-        } else {
-            classesArray[value] = false;
-        }
-        setClasses(classesArray.join(','));
-    }
+    // const handleCheckBox = (event) => {
+    //     const { value, checked } = event.target;
+    //     if(checked) {
+    //         classesArray[value] = true;
+    //     } else {
+    //         classesArray[value] = false;
+    //     }
+    //     setClasses(classesArray.join(','));
+    // }
 
     const handleChange = event => {
         event.preventDefault();
@@ -113,7 +113,7 @@ const SearchPage = () => {
             setSecondPrograms(0);
             setDifferentNameProgram('');
             setClasses([]);
-            classesArray = new Array(24).fill(false);
+            // classesArray = new Array(24).fill(false);
             axios.all(endpoints.map((endpoint) => axios.get(endpoint, {headers: { 'x-access-token' : localStorage.getItem('userToken') }}))).then(
                 axios.spread(( institution, employee, programs, events ) => {
                     setInstitutionData(institution.data.rows);

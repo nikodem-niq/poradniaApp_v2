@@ -3,6 +3,7 @@ import { removeItem } from "../middlewares/updateData"
 import { DataButton, DataDownloadButton } from "./ControllerBlock"
 import html2pdf from 'html2pdf.js';
 import React, { useEffect, useState } from "react";
+import ModalComponent from "./ModalComponent";
 
 
 
@@ -22,70 +23,77 @@ const defineForWho = (data,classes) => {
                             case 1:
                                 classList.push('Przedszkole (PP)')
                                 break;
-                            case 10:
+                            case 2:
+                                classList.push('Rok zycia 6')
+                                break;
+                            case 11:
                                 classList.push('I Liceum')
                                 break;                                
-                            case 11:
+                            case 12:
                                 classList.push('II Liceum')
                                 break;                                
-                            case 12:
+                            case 13:
                                 classList.push('III Liceum')
                                 break;                                
-                            case 13:
+                            case 14:
                                 classList.push('IV Liceum')
                                 break;     
 
-                            case 14:
+                            case 15:
                                 classList.push('I Technikum')
                                 break;                                
-                            case 15:
+                            case 16:
                                 classList.push('II Technikum')
                                 break;                                
-                            case 16:
+                            case 17:
                                 classList.push('III Technikum')
                                 break;                                
-                            case 17:
+                            case 18:
                                 classList.push('IV Technikum')
                                 break;                                
-                            case 18:
+                            case 19:
                                 classList.push('V Technikum')
                                 break;  
                                 
-                            case 19:
+                            case 20:
                                 classList.push('I - I Branzowa')
                                 break;                                
-                            case 20:
+                            case 21:
                                 classList.push('I - II Branzowa')
                                 break;                                
-                            case 21:
+                            case 22:
                                 classList.push('I - III Branzowa')
                                 break;                                
-                            case 22:
+                            case 23:
                                 classList.push('II - I Branzowa')
                                 break;                                
-                            case 23:
+                            case 24:
                                 classList.push('II - II Branzowa')
                                 break;   
                                 
                                 
                             default:
-                                classList.push(`${i-1} pods.`);
+                                classList.push(`${i-2} pods.`);
                                 break;
                         }
                     }
                 }
                 return `uczniowie (klasy: ${classList})`
             }
+            break;
         case 1:
             return 'rodzice'
         case 2:
             return 'nauczyciele'
+        default:
+            break;
         }
     }
 
 const TableData = (props) => {
     const [isLoading, setLoading] = useState(false);
     const [data, setData] = useState(props.data);
+    const [isModal, setModal] = useState(false);
 
     useEffect(() => {
         setData(props.data)
@@ -131,6 +139,7 @@ const TableData = (props) => {
                         <DataDownloadButton onClick={() => {printData('instytucje')}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Pobierz PDF</DataDownloadButton>
                     </div>
                 <TableWrapper id="tableWithData">
+                <table>
                     <tr>
                         <th>
                             <p>Lp.</p>
@@ -209,9 +218,9 @@ const TableData = (props) => {
                     </tr>
                     {!data && !isLoading ? 'loading' : data.map((el,i) => {
                         // return <TableItem iterator={!props.handleSort[1] ? i+1 : data.length-i} whichTable="institution" id={el.idInstitution} name={el.name} email={el.email} city={el.city} community={el.community} postalCode={el.postalCode} address={el.address} telephone={el.telephone} fax={el.fax}/>
-                        return <TableItem iterator={i+1} whichTable="institution" id={el.idInstitution} name={el.name} email={el.email} city={el.city} community={el.community} postalCode={el.postalCode} address={el.address} telephone={el.telephone} fax={el.fax}/>
+                        return <TableItem setModal={isModal} setStateModal={setModal} iterator={i+1} key={i} whichTable="institution" id={el.idInstitution} name={el.name} email={el.email} city={el.city} community={el.community} postalCode={el.postalCode} address={el.address} telephone={el.telephone} fax={el.fax}/>
                     })}
-                    
+                    </table>
                 </TableWrapper>
                 </div>
             ) 
@@ -225,6 +234,8 @@ const TableData = (props) => {
                     <DataDownloadButton onClick={() => {printData('pracownicy')}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Pobierz PDF</DataDownloadButton>
                 </div>
                 <TableWrapper id="tableWithData">
+                <table>
+                    <thead>
                     <tr>
                         <th><p>Lp.</p>
                         {/* <img src={sort} onClick={() => {
@@ -266,9 +277,11 @@ const TableData = (props) => {
                         </th>
                         <th id="actionsTableHeader">Akcje</th>
                     </tr>
+                    </thead>
                     {props.data.map((el, i) => {
-                        return <TableItem iterator={i+1} whichTable="employee" id={el.idEmployee} name={el.firstName} secondName={el.secondName} lastName={el.lastName} age={el.age}/>
+                        return <TableItem iterator={i+1} key={i} setModal={isModal} setStateModal={setModal} whichTable="employee" id={el.idEmployee} name={el.firstName} secondName={el.secondName} lastName={el.lastName} age={el.age}/>
                     })}
+                </table>
                 </TableWrapper>
                 </div>
             )
@@ -282,6 +295,8 @@ const TableData = (props) => {
                     <DataDownloadButton onClick={() => {printData('programy')}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Pobierz PDF</DataDownloadButton>
                 </div>
                 <TableWrapper id="tableWithData">
+                    <table>
+                    <thead>
                     <tr>
                         <th>Lp.</th>
                         <th>Nazwa</th>
@@ -290,9 +305,11 @@ const TableData = (props) => {
                         <th id="actionsTableHeader">Akcje</th>
 
                     </tr>
+                    </thead>
                     {!data && !isLoading ? 'loading' : props.data.map((el,i) => {
-                        return <TableItem iterator={i+1} whichTable="programs" id={el.idProgram} name={el.name} isLocal={el.isLocal} typeOfProgram={el.typeOfProgram} forWho={el.forWho} classes={el.classes}/>
+                        return <TableItem iterator={i+1} key={i} setModal={isModal} setStateModal={setModal} whichTable="programs" id={el.idProgram} name={el.name} isLocal={el.isLocal} typeOfProgram={el.typeOfProgram} forWho={el.forWho} classes={el.classes}/>
                     })}
+                    </table>
                 </TableWrapper>
                 </div>
             )
@@ -306,6 +323,8 @@ const TableData = (props) => {
                     <DataDownloadButton onClick={() => {printData('wydarzenia')}} width="5rem" height="1.2rem" fontSize="0.8rem" to="#">Pobierz PDF</DataDownloadButton>
                 </div>
                 <TableWrapper id="tableWithData">
+                <table>
+                <thead>
                 <tr>
                     <th>Lp.</th>
                     <th>Data wizyty</th>
@@ -322,21 +341,22 @@ const TableData = (props) => {
 
     
                 </tr>
+                </thead>
                 {props.eventData.map((el,i) => {
                 // const findUser = props.employeeData.filter(element => {
                 //     return element.idEmployee == el.employeeId;
                 // })[0]
 
                 const findInstitution = props.institutionData.filter(element => {
-                    return element.idInstitution == el.institutionId;
+                    return element.idInstitution === el.institutionId;
                 })[0];
 
                 const findProgram = props.programsData.filter(element => {
-                    return element.idProgram == el.programId;
+                    return element.idProgram === el.programId;
                 })[0];
 
 
-                    return <tr>
+                    return <tbody><tr>
                         <td>{i+1}</td>
                         <td>{el.dateOfEvent}</td>
                         {/* <td>{findUser.firstName} {findUser.lastName}</td> */}
@@ -357,7 +377,9 @@ const TableData = (props) => {
                         <DataButton class="removeBtn" onClick={() => {removeItem(el.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
                         </td>
                     </tr>
+                    </tbody>
                 })}
+            </table>
             </TableWrapper>
             </div>
             )
@@ -374,6 +396,7 @@ const TableItem = props => {
     switch(props.whichTable) {
         case 'institution':
             return (
+                <tbody>
                 <tr>
                     <td>{props.iterator}</td>
                     <td>{props.name}</td>
@@ -384,38 +407,44 @@ const TableItem = props => {
                     <td>{props.address}</td>
                     <td>{props.telephone}</td>
                     <td>{props.fax}</td>
-                    <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
-                        {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
+                    <td className="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
                         <DataButton onClick={() => {removeItem(props.id, 'institution')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
+                        <DataButton class="updateBtn" width="0.5rem" height="0.3rem" fontSize="0.8rem" to={`/edit/institution/${props.id}`}>Edytuj</DataButton>
                     </td>
                 </tr>
+                </tbody>
             )
         case 'employee':
             return (
+                <tbody>
                 <tr>
                     <td>{props.iterator}</td>
                     <td>{props.name}</td>
                     <td>{props.secondName}</td>
                     <td>{props.lastName}</td>
                     <td>{props.age}</td>
-                    <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
+                    <td className="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
                         {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
                         <DataButton onClick={() => {removeItem(props.id, 'employee')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
                     </td>
                 </tr>
+                </tbody>
             )
         case 'programs':        
             return (
+                <tbody>
+                <ModalComponent setModal={props.setModal} error={`Na początku usuń dany program z wydarzeń!`}/>
                 <tr>
                     <td>{props.iterator}</td>
                     <td>{props.name}</td>
                     <td>{props.isLocal ? "lokalnie" : "teren"}</td>
                     <td>{props.typeOfProgram}</td>
-                    <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
+                    <td className="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
                         {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
-                        <DataButton onClick={() => {removeItem(props.id, 'programs')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
+                        <DataButton onClick={() => {removeItem(props.id, 'programs', props.setStateModal)}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
                     </td>
                 </tr>
+                </tbody>
             )
         default:
             <tr>
@@ -424,68 +453,195 @@ const TableItem = props => {
     }
 }
 
-const TableWrapper = styled.table`
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    display: flex;
+// const TableWrapper = styled.table`
+//     td, th {
+//         border-left: 1px solid #ddd;
+//         border-right: 1px solid #ddd;
+//         padding: 8px;
+//     }
 
-    font-family: Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    table-layout: fixed;
+//     td {
+//         width: 100%;
+//     }
+//     tbody {
+//         width: 100%;
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//     }
+//     tbody td {
+//         width: 100%;
+//         min-width: 7em;
+//         max-width: 7em;
+//         /* font-size: 16px; */
+//         font-size: 1.2vw;
+//         overflow-wrap: break-word; 
+//     }
+//     thead {
+//         width: 100%;
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//     }
+//     thead td {
+//         width: 100%;
+//         min-width: 7em;
+//         max-width: 7em;
+//     }
+//     tr:nth-child(even){
+//         background-color: #dcdde1;
+//         border-left: solid 1px #f5f6fa;
+//         border-right: solid 1px #f5f6fa;
+//     }
 
-    td, th {
-        border-left: 1px solid #ddd;
-        border-right: 1px solid #ddd;
-        padding: 8px;
-    }
+//     tr:hover {
+//         background-color: #0984e3;
+//     }
 
-    td {
-        width: 100%;
-    }
-
-    tr:nth-child(even){
-        background-color: #dcdde1;
-        border-left: solid 1px #f5f6fa;
-        border-right: solid 1px #f5f6fa;
-    }
-
-    tr:hover {
-        background-color: #0984e3;
-    }
-
-    th {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        align-items: center;
-        font-size: 0.9rem;
-        background-color: #04AA6D;
-        color: white;
-        width: 100%;
-        height: 2.5rem;
+//     th {
+//         padding-top: 1rem;
+//         padding-bottom: 1rem;
+//         text-align: left;
+//         display: flex;
+//         flex-direction: column;
+//         justify-content: space-evenly;
+//         align-items: center;
+//         font-size: 0.9rem;
+//         background-color: #04AA6D;
+//         color: white;
+//         width: 100%;
+//         height: 2.5rem;
         
-        img {
-            width: 1.2rem;
-            height: auto;
-            cursor: pointer;
-        }
-    }
+//         img {
+//             width: 1.2rem;
+//             height: auto;
+//             cursor: pointer;
+//         }
+//     }
 
-    tr {
-        width: 90%;
-        display: flex;
-        height: auto;
-        margin: 0.2rem 0;
-        justify-content: center;
-        align-items: center;
-        background: #f5f6fa;
-    }
+//     tr {
+//         width: 95%;
+//         display: flex;
+//         height: auto;
+//         margin: 0.2rem 0;
+//         justify-content: center;
+//         align-items: center;
+//         background: #f5f6fa;
+//     }
+
+//     justify-content: center;
+//     align-items: center;
+//     flex-direction: column;
+//     display: flex;
+
+//     font-family: Arial, Helvetica, sans-serif;
+//     border-collapse: collapse;
+//     width: 100%;
+//     table-layout: fixed;
+// `
+
+const TableWrapper = styled.div`
+table {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+table caption {
+  font-size: 1.5em;
+  margin: .5em 0 .75em;
+}
+
+table tr {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  padding: .35em;
+}
+
+table th,
+table td {
+  padding: .625em;
+  text-align: center;
+  overflow-wrap: break-word; 
+
+}
+
+table th {
+  font-size: .7em;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+table tr:nth-child(even){
+    background-color: #dcdde1;
+    border-left: solid 1px #f5f6fa;
+    border-right: solid 1px #f5f6fa;
+}
+
+tr:hover {
+    background-color: #dcdde1;
+}
+
+
+
+
+@media screen and (max-width: 600px) {
+  table {
+    border: 0;
+  }
+
+  table caption {
+    font-size: 1.3em;
+  }
+  
+  table thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  
+  table tr {
+    border-bottom: 3px solid #ddd;
+    display: block;
+    margin-bottom: .625em;
+  }
+  
+  table td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: .8em;
+    text-align: right;
+  }
+  
+  table td::before {
+    /*
+    * aria-label has no advantage, it won't be read inside a table
+    content: attr(aria-label);
+    */
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  table td:last-child {
+    border-bottom: 0;
+  }
+}
+
+
+
 `
+
+
 
 
 export default TableData;

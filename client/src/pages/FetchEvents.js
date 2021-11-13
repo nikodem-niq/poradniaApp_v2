@@ -11,7 +11,7 @@ import { ErrorBox } from "../components/InputErrorBox";
 import { validate } from "../middlewares/validate";
 
 const employeesNames = [];
-let classesArray = new Array(24).fill(false);
+let classesArray = new Array(25).fill(false);
 
 const FetchEvents = () => {
     // Posting
@@ -42,17 +42,17 @@ const FetchEvents = () => {
     const handleChange = (event) => {
         validate(event.target.name,event.target.value,errors,setErrors)
         // console.log(event.target.selectedOptions[0].getAttribute('data-id'));
-        if(event.target.name == 'employeeId') {
+        if(event.target.name === 'employeeId') {
             employeesNames.push(event.target.value);
             const uniqueNames = Array.from(new Set(employeesNames)).join(', ');
             setEmployee(uniqueNames);
-        } else if(event.target.name == 'dateOfEvent') {
+        } else if(event.target.name === 'dateOfEvent') {
             setDateOfEvent(event.target.value.toString())
-        } else if(event.target.name == 'institutionId') {
+        } else if(event.target.name === 'institutionId') {
             setInstitutionId(event.target.selectedOptions[0].getAttribute('data-id'))
-        } else if(event.target.name == 'programsId') {
+        } else if(event.target.name === 'programsId') {
             setProgramId(event.target.selectedOptions[0].getAttribute('data-id'))
-        } else if(event.target.name == 'forWho') { 
+        } else if(event.target.name === 'forWho') { 
             if(event.target.value === 'uczniowie') {
                 setForWho(0);
                 setCheckboxesVisible(true);
@@ -67,18 +67,18 @@ const FetchEvents = () => {
                 setForWho(2);
             }
         }
-        else if(event.target.name == 'howManyParticipiants') {
+        else if(event.target.name === 'howManyParticipiants') {
             setHowManyParticipiants(event.target.value);
-        } else if(event.target.name == 'howManyPrograms') {
+        } else if(event.target.name === 'howManyPrograms') {
             setHowManyPrograms(event.target.value);
-        } else if(event.target.name == 'differentNameProgram') {
+        } else if(event.target.name === 'differentNameProgram') {
             setDifferentNameProgram(event.target.value);
         }
-        else if(event.target.name == 'quantityOfWorkers') {
+        else if(event.target.name === 'quantityOfWorkers') {
             if(!isNaN(parseInt(event.target.value))){
                 setEmployeeCount(parseInt(event.target.value));
             }
-            if(event.target.value == ''){
+            if(event.target.value === ''){
                 setEmployeeCount(0);
             }
         }
@@ -93,7 +93,6 @@ const FetchEvents = () => {
         }
         setClasses(classesArray.join(','));
         // console.log(classesArray.join(','));
-        console.log(classesArray);
     }
 
 
@@ -117,7 +116,7 @@ const FetchEvents = () => {
         setHowManyPrograms("");
         setDifferentNameProgram("");
         setClasses([]);
-        classesArray = new Array(24).fill(false);
+        classesArray = new Array(25).fill(false);
         document.getElementById('firstOptionInstitution').disabled = false;
         document.getElementById('firstOptionProgram').disabled = false;
         document.getElementById('firstOptionEmployee').disabled = false;
@@ -191,51 +190,55 @@ const FetchEvents = () => {
                         <div style={{display: 'flex', alignContent: 'center'}}>
                             <h3>Podstawa</h3>
                             <div>
-                                <label for="beforeSchool1">Rok zycia 0-3</label>
+                                <label htmlFor="beforeSchool1">Rok zycia 0-3</label>
                                 <input type="checkbox" id="beforeSchool1" name="beforeSchool1" value="0" onChange={handleCheckBox}/>
                             </div>
                             <div>
-                                <label for="beforeSchool2">PP (Przedszkole)</label>
+                                <label htmlFor="beforeSchool2">PP (Przedszkole)</label>
                                 <input type="checkbox" id="beforeSchool2" name="beforeSchool2" value="1" onChange={handleCheckBox}/>
                             </div>
                             <div>
-                                <label for="class1">Klasa 1</label>
-                                <input type="checkbox" id="class1" name="class1" value="2" onChange={handleCheckBox}/>
+                                <label htmlFor="beforeSchool3">Rok zycia 6</label>
+                                <input type="checkbox" id="beforeSchool3" name="beforeSchool3" value="2" onChange={handleCheckBox}/>
+                            </div>
+                            <div>
+                                <label htmlFor="class1">Klasa 1</label>
+                                <input type="checkbox" id="class1" name="class1" value="3" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class2">Klasa 2</label>
-                                <input type="checkbox" id="class2" name="class2" value="3" onChange={handleCheckBox}/>
+                                <label htmlFor="class2">Klasa 2</label>
+                                <input type="checkbox" id="class2" name="class2" value="4" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class3">Klasa 3</label>
-                                <input type="checkbox" id="class3" name="class3" value="4" onChange={handleCheckBox}/>
+                                <label htmlFor="class3">Klasa 3</label>
+                                <input type="checkbox" id="class3" name="class3" value="5" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class4">Klasa 4</label>
-                                <input type="checkbox" id="class4" name="class4" value="5" onChange={handleCheckBox}/>
+                                <label htmlFor="class4">Klasa 4</label>
+                                <input type="checkbox" id="class4" name="class4" value="6" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class5">Klasa 5</label>
-                                <input type="checkbox" id="class5" name="class5" value="6" onChange={handleCheckBox}/>
+                                <label htmlFor="class5">Klasa 5</label>
+                                <input type="checkbox" id="class5" name="class5" value="7" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class6">Klasa 6</label>
-                                <input type="checkbox" id="class6" name="class6" value="7" onChange={handleCheckBox}/>
+                                <label htmlFor="class6">Klasa 6</label>
+                                <input type="checkbox" id="class6" name="class6" value="8" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class7">Klasa 7</label>
-                                <input type="checkbox" id="class7" name="class7" value="8" onChange={handleCheckBox}/>
+                                <label htmlFor="class7">Klasa 7</label>
+                                <input type="checkbox" id="class7" name="class7" value="9" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class8">Klasa 8</label>
-                                <input type="checkbox" id="class8" name="class8" value="9" onChange={handleCheckBox}/>
+                                <label htmlFor="class8">Klasa 8</label>
+                                <input type="checkbox" id="class8" name="class8" value="10" onChange={handleCheckBox}/>
                             </div>
                         </div>
                         {/* 
@@ -246,23 +249,23 @@ const FetchEvents = () => {
                         <div style={{display: 'flex', alignContent: 'center'}}>
                             <h3>Licea i technika</h3>
                             <div>
-                                <label for="class9">Klasa 1 (liceum)</label>
-                                <input type="checkbox" id="class9" name="class9" value="10" onChange={handleCheckBox}/>
+                                <label htmlFor="class9">Klasa 1 (liceum)</label>
+                                <input type="checkbox" id="class9" name="class9" value="11" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class10">Klasa 2 (liceum)</label>
-                                <input type="checkbox" id="class10" name="class10" value="11" onChange={handleCheckBox}/>
+                                <label htmlFor="class10">Klasa 2 (liceum)</label>
+                                <input type="checkbox" id="class10" name="class10" value="12" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class11">Klasa 3 (liceum)</label>
-                                <input type="checkbox" id="class11" name="class11" value="12" onChange={handleCheckBox}/>
+                                <label htmlFor="class11">Klasa 3 (liceum)</label>
+                                <input type="checkbox" id="class11" name="class11" value="13" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class12">Klasa 4 (liceum)</label>
-                                <input type="checkbox" id="class12" name="class12" value="13" onChange={handleCheckBox}/>
+                                <label htmlFor="class12">Klasa 4 (liceum)</label>
+                                <input type="checkbox" id="class12" name="class12" value="14" onChange={handleCheckBox}/>
                             </div>
 
                          {/* 
@@ -272,24 +275,24 @@ const FetchEvents = () => {
                          */}
 
                             <div>
-                                <label for="class13">Klasa 1 (technikum)</label>
-                                <input type="checkbox" id="class13" name="class13" value="14" onChange={handleCheckBox}/>
+                                <label htmlFor="class13">Klasa 1 (technikum)</label>
+                                <input type="checkbox" id="class13" name="class13" value="15" onChange={handleCheckBox}/>
                             </div>                         
                             <div>
-                                <label for="class14">Klasa 2 (technikum)</label>
-                                <input type="checkbox" id="class14" name="class14" value="15" onChange={handleCheckBox}/>
+                                <label htmlFor="class14">Klasa 2 (technikum)</label>
+                                <input type="checkbox" id="class14" name="class14" value="16" onChange={handleCheckBox}/>
                             </div>                         
                             <div>
-                                <label for="class15">Klasa 3 (technikum)</label>
-                                <input type="checkbox" id="class15" name="class15" value="16" onChange={handleCheckBox}/>
+                                <label htmlFor="class15">Klasa 3 (technikum)</label>
+                                <input type="checkbox" id="class15" name="class15" value="17" onChange={handleCheckBox}/>
                             </div>                         
                             <div>
-                                <label for="class16">Klasa 4 (technikum)</label>
-                                <input type="checkbox" id="class16" name="class16" value="17" onChange={handleCheckBox}/>
+                                <label htmlFor="class16">Klasa 4 (technikum)</label>
+                                <input type="checkbox" id="class16" name="class16" value="18" onChange={handleCheckBox}/>
                             </div>                         
                             <div>
-                                <label for="class17">Klasa 5 (technikum)</label>
-                                <input type="checkbox" id="class17" name="class17" value="18" onChange={handleCheckBox}/>
+                                <label htmlFor="class17">Klasa 5 (technikum)</label>
+                                <input type="checkbox" id="class17" name="class17" value="19" onChange={handleCheckBox}/>
                             </div>                         
                         </div>
 
@@ -302,28 +305,28 @@ const FetchEvents = () => {
                         <div style={{display: 'flex', alignContent: 'center'}}>
                             <h3>Klasy branzowe</h3>
                             <div>
-                                <label for="class18">Klasa 1, I stopień(branzowa)</label>
-                                <input type="checkbox" id="class18" name="class18" value="19" onChange={handleCheckBox}/>
+                                <label htmlFor="class18">Klasa 1, I stopień(branzowa)</label>
+                                <input type="checkbox" id="class18" name="class18" value="20" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class19">Klasa 2, I stopień(branzowa)</label>
-                                <input type="checkbox" id="class19" name="class19" value="20" onChange={handleCheckBox}/>
+                                <label htmlFor="class19">Klasa 2, I stopień(branzowa)</label>
+                                <input type="checkbox" id="class19" name="class19" value="21" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class20">Klasa 3, I stopień(branzowa)</label>
-                                <input type="checkbox" id="class20" name="class20" value="21" onChange={handleCheckBox}/>
+                                <label htmlFor="class20">Klasa 3, I stopień(branzowa)</label>
+                                <input type="checkbox" id="class20" name="class20" value="22" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class21">Klasa 1, II stopień (branzowa)</label>
-                                <input type="checkbox" id="class21" name="class21" value="22" onChange={handleCheckBox}/>
+                                <label htmlFor="class21">Klasa 1, II stopień (branzowa)</label>
+                                <input type="checkbox" id="class21" name="class21" value="23" onChange={handleCheckBox}/>
                             </div>
 
                             <div>
-                                <label for="class22">Klasa 2, II stopień (branzowa)</label>
-                                <input type="checkbox" id="class22" name="class22" value="23" onChange={handleCheckBox}/>
+                                <label htmlFor="class22">Klasa 2, II stopień (branzowa)</label>
+                                <input type="checkbox" id="class22" name="class22" value="24" onChange={handleCheckBox}/>
                             </div>
                         </div>
                     </div>

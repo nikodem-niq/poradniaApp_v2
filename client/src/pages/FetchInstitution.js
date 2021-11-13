@@ -9,41 +9,57 @@ import { postData } from "../middlewares/postData";
 import ModalComponent from "../components/ModalComponent";
 import { validate } from "../middlewares/validate";
 import { ErrorBox } from "../components/InputErrorBox";
+import { editItem } from "../middlewares/updateData";
 
 
 
 
-const FetchInstitution = () => {
+const FetchInstitution = (props) => {
     const [institutionData, setInstitutionData] = useState([]);
     const [isAscending, setDescending] = useState(false)
     const [ifReload, setReload] = useState(false);
 
     useEffect(() => {
-        fetchData('/fetchData/institution-get').then(response => {
-            setInstitutionData(response.data.rows)
-            setReload(false);
-        }).catch(err => {
-            console.log(err);
-        })
+            fetchData('/fetchData/institution-get').then(response => {
+                setInstitutionData(response.data.rows)
+                setReload(false);
+            }).catch(err => {
+                console.log(err);
+            })
         
     }, [ifReload])
 
     const handleStateChange = useCallback(state => {
         setInstitutionData(state);
-    }, [institutionData])
+    }, [])
 
     return (
         <OuterWrapper>
             <Navbar/>
             <InnerWrapper>
-                <AddInstitution ifReloadData={setReload}/>
+                <AddInstitution key="addInstitution" ifReloadData={setReload}/>
                 <TableData whichTable="institution" data={institutionData} handleSort={[handleStateChange, isAscending, setDescending]}/>
             </InnerWrapper>
         </OuterWrapper>
     )
 }
 
-const AddInstitution = props => {
+export const AddInstitution = props => {
+
+    //Editing
+    const [currentlyEdited, setCurrentlyEdited] = useState('');
+    const [dataToEdit, setDataToEdit] = useState([]);
+    useEffect(() => {
+        if(props.edit) {
+            fetchData(`/fetchData/institution-get?id=${props.id}`).then(response => {
+                setDataToEdit(response.data.rows[0]);
+            }).catch(err => {
+                console.log(err)
+            })
+        } 
+    }, [props.edit])
+
+    //Adding
 
     const [nameOfInstitution, setNameOfInstitution] = useState("");
     const [email, setEmail] = useState("");
@@ -107,6 +123,10 @@ const AddInstitution = props => {
             case 'fax' :
                 setFax(value);
                 break;
+
+            case 'editForm':
+                setCurrentlyEdited(value);
+                break;
             default:
                 break;
         }
@@ -122,27 +142,39 @@ const AddInstitution = props => {
             <Navbar/>
             <InnerWrapperTwo>
                 <Form>
-                    <ModalComponent setModal={isModal} name={nameOfInstitution} handleReset={handleReset}/>
-                    <h1>Formularz dodania nowej placówki</h1>
-                    <input type="text" onChange={handleChange} name="nameOfInstitution" id="nameOfInstitution" placeholder="Nazwa placówki.."/>
+                    {props.edit ? <ModalComponent setModal={isModal} name={dataToEdit.name} handleReset={handleReset} edit={true}/> : <ModalComponent setModal={isModal} name={nameOfInstitution} handleReset={handleReset}/>}
+                    {props.edit ? <h1>Formularz edycji placówki: <p style={{color: '#0f81d9'}}>{dataToEdit
+                     ? dataToEdit.name : 'Nie znaleziono instytucji'}</p></h1> : <h1>Formularz dodania nowej placówki</h1>}
+                    {props.edit ? <select name="editForm" id="editForm" onChange={handleChange}>
+                        <option disabled selected>-- Wybierz co zmienić --</option>
+                        <option value="nameOfInstitution">Nazwa</option>
+                        <option value="email">Email</option>
+                        <option value="city">Miejscowosc</option>
+                        <option value="postalCode">Kod pocztowy</option>
+                        <option value="community">Gmina</option>
+                        <option value="address">Adres</option>
+                        <option value="telephone">Telefon</option>
+                        <option value="fax">Fax</option>
+                    </select> : ''}
+                    {!props.edit || currentlyEdited === 'nameOfInstitution' ? <input type="text" onChange={handleChange} name="nameOfInstitution" id="nameOfInstitution" placeholder={props.edit ? `Aktualnie: ${dataToEdit.name}` : "Nazwa placówki.."}/> : ''}
                     {errors.nameOfInstitution !== ''  ? <ErrorBox>{errors.nameOfInstitution}</ErrorBox> : ''}
-                    <input type="text" onChange={handleChange} name="email" id="email" placeholder="Email placówki.."/>
+                    {!props.edit || currentlyEdited === 'email' ? <input type="text" onChange={handleChange} name="email" id="email" placeholder={props.edit ? `Aktualnie: ${dataToEdit.email}` : "Email placówki.."}/> : ''}
                     {errors.email !== ''  ? <ErrorBox>{errors.email}</ErrorBox> : ''}
                     <div>
-                        <input type="text" onChange={handleChange} name="city" id="city" placeholder="Miejscowość.."/>
-                        <input type="text" onChange={handleChange} name="postalCode" id="postalCode" placeholder="Kod pocztowy.."/>
+                        {!props.edit || currentlyEdited === 'city' ? <input type="text" onChange={handleChange} name="city" id="city" placeholder={props.edit ? `Aktualnie: ${dataToEdit.city}` : "Miejscowość placówki.."}/> : ''}
+                        {!props.edit || currentlyEdited === 'postalCode' ? <input type="text" onChange={handleChange} name="postalCode" id="postalCode" placeholder={props.edit ? `Aktualnie: ${dataToEdit.postalCode}` : "Kod pocztowy placówki.."}/> : ''}
                     </div>
                         {errors.city !== ''  ? <ErrorBox>{errors.city}</ErrorBox> : ''} <br/>
                         {errors.postalCode !== ''  ? <ErrorBox>{errors.postalCode}</ErrorBox> : ''}
-                    <input type="text" onChange={handleChange} name="community" id="community" placeholder="Gmina.."/>
+                    {!props.edit || currentlyEdited === 'community' ? <input type="text" onChange={handleChange} name="community" id="community" placeholder={props.edit ? `Aktualnie: ${dataToEdit.community}` : "Gmina placówki.."}/> : ''}
                     {errors.community !== ''  ? <ErrorBox>{errors.community}</ErrorBox> : ''}
-                    <input type="text" onChange={handleChange} name="address" id="address" placeholder="Adres placówki.."/>
+                    {!props.edit || currentlyEdited === 'address' ? <input type="text" onChange={handleChange} name="address" id="address" placeholder={props.edit ? `Aktualnie: ${dataToEdit.address}` : "Adres placówki.."}/> : ''}
                     {errors.address !== ''  ? <ErrorBox>{errors.address}</ErrorBox> : ''}
-                    <input type="text" onChange={handleChange} name="telephone" id="telephone" placeholder="Telefon placówki.."/>
+                    {!props.edit || currentlyEdited === 'telephone' ? <input type="text" onChange={handleChange} name="telephone" id="telephone" placeholder={props.edit ? `Aktualnie: ${dataToEdit.telephone}` : "Telefon placówki.."}/> : ''}
                     {errors.telephone !== ''  ? <ErrorBox>{errors.telephone}</ErrorBox> : ''}
-                    <input type="text" onChange={handleChange} name="fax" id="fax" placeholder="FAX placówki.. (nie jest konieczny)"/>
-                    <AddButton to="#" onClick={() => {postData("/postData/institution-add",{nameOfInstitution, email, city, postalCode, community, address, telephone, fax},null,props.ifReloadData, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}} >Dodaj</AddButton>
-
+                    {!props.edit || currentlyEdited === 'fax' ? <input type="text" onChange={handleChange} name="fax" id="fax" placeholder={props.edit ? `Aktualnie: ${dataToEdit.fax}` : "FAX placówki.."}/> : ''}
+                    {props.edit ? <AddButton to="#" onClick={() => {editItem("/updateData/institution-edit",{nameOfInstitution, email, city, postalCode, community, address, telephone, fax}, props.id, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: '#0f81d9'}} >Edytuj</AddButton> : <AddButton to="#" onClick={() => {postData("/postData/institution-add",{nameOfInstitution, email, city, postalCode, community, address, telephone, fax},null,props.ifReloadData, setModal)}} style={ isFormValid() ? {backgroundColor: 'red', pointerEvents: 'none'} : {backgroundColor: 'green'}} >Dodaj</AddButton>}
+            
                     {isFormValid() &&
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }
@@ -186,7 +218,7 @@ const Form = styled.form`
     flex-direction: column;
     align-items: center;
 
-    input {
+    input, select {
         border: none;
         width: 21rem;
         height: auto;

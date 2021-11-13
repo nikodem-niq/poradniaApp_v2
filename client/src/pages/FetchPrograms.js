@@ -17,8 +17,6 @@ const FetchPrograms = () => {
     const [typeOfProgram, setTypeOfProgram] = useState("");
     const [ifReload, setReload] = useState(false);
 
-    const [areCheckboxesVisible, setCheckboxesVisible] = useState(false);
-
     const [isModal, setModal] = useState(false);
     const [errors, setErrors] = useState({
         nameOfProgram : '',
