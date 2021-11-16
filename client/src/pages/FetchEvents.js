@@ -9,11 +9,12 @@ import { postData } from "../middlewares/postData";
 import ModalComponent from "../components/ModalComponent";
 import { ErrorBox } from "../components/InputErrorBox";
 import { validate } from "../middlewares/validate";
+import { editItem } from "../middlewares/updateData";
 
 const employeesNames = [];
 let classesArray = new Array(25).fill(false);
 
-const FetchEvents = () => {
+const FetchEvents = props => {
     // Posting
     const [dateOfEvent, setDateOfEvent] = useState("");
     const [employees, setEmployee] = useState("");
@@ -36,12 +37,14 @@ const FetchEvents = () => {
         howManyPrograms : '',
     })
 
+    const [currentlyEdited, setCurrentlyEdited] = useState('');
+    const [dataToEdit, setDataToEdit] = useState([]);
+
 
 
 
     const handleChange = (event) => {
         validate(event.target.name,event.target.value,errors,setErrors)
-        // console.log(event.target.selectedOptions[0].getAttribute('data-id'));
         if(event.target.name === 'employeeId') {
             employeesNames.push(event.target.value);
             const uniqueNames = Array.from(new Set(employeesNames)).join(', ');
@@ -82,6 +85,9 @@ const FetchEvents = () => {
                 setEmployeeCount(0);
             }
         }
+        else if(event.target.name === 'editForm') {
+            setCurrentlyEdited(event.target.value);
+        }
     }
 
     const handleCheckBox = (event) => {
@@ -92,7 +98,6 @@ const FetchEvents = () => {
             classesArray[value] = false;
         }
         setClasses(classesArray.join(','));
-        // console.log(classesArray.join(','));
     }
 
 
@@ -111,7 +116,6 @@ const FetchEvents = () => {
         employeesNames.splice(0,employeesNames.length);
         setInstitutionId("");
         setProgramId("");
-        // setTypeOfProgram("");
         setHowManyParticipiants("");
         setHowManyPrograms("");
         setDifferentNameProgram("");
@@ -127,6 +131,7 @@ const FetchEvents = () => {
     }
 
     useEffect(() => {
+
         const endpoints = [
             '/fetchData/institution-get',
             '/fetchData/employee-get',
@@ -143,16 +148,226 @@ const FetchEvents = () => {
             })
           );
 
+
         setReload(false);
-    }, [ifReload])
+    }, [props.edit, ifReload])
+
+    
 
     const isFormValid = () =>{
         let isValid = errors.dateOfEvent === '' && employees !== '' && institutionId !== '' && programId !== '' && errors.howManyParticipiants === '' && errors.howManyPrograms === ''; 
         return isValid ? '' : 'disabled';
     }
 
-
     return (
+        // EDIT FORM
+
+        <div>
+            {props.edit ?  <OuterWrapper> 
+            <Navbar/>
+            <InnerWrapper>
+            <Form>
+                    <ModalComponent setModal={isModal} name={`Wydarzenie`} handleReset={handleReset} edit={true}/>
+                    <h1>Formularz edycji wydarzenia</h1>
+                    <select name="editForm" id="editForm" onChange={handleChange}>
+                        <option disabled selected>-- Wybierz co zmienić --</option>
+                        <option value="dateOfEvent">Data</option>
+                        <option value="employees">Pracownicy</option>
+                        <option value="institutionId">Placowka</option>
+                        <option value="programId">Program</option>
+                        <option value="forWho">Dla kogo?</option>
+                        <option value="howManyParticipiants">Ilu korzystających</option>
+                        <option value="howManyPrograms">Ile form pomocy</option>
+                        <option value="differentNameProgram">Inna nazwa</option>
+                    </select>
+                    {currentlyEdited === 'dateOfEvent' ? <div><label htmlFor="dateOfEvent">Data wizyty</label>                     <input type="date" onChange={handleChange} name="dateOfEvent" id="dateOfEvent" placeholder="Data wizyty.."/> </div> : ''}
+                    {errors.dateOfEvent !== ''  ? <ErrorBox>{errors.dateOfEvent}</ErrorBox> : ''}
+                    {currentlyEdited === 'employees' ? <input type="text" onChange={handleChange} name="quantityOfWorkers" id="quantityOfWorkers" placeholder="Ilu pracownikow w wydarzeniu?"/> : ''}
+
+                    {currentlyEdited === 'employees' ? [...Array(parseInt(employeeCount))].map((v,i) => {
+                        return <SelectEmployee i={i} employeeData={employeeData} handleChange={handleChange}/>
+                    }) : ''}
+                    {currentlyEdited === 'institutionId' ?                     <select name="institutionId" id="institutionId" onChange={handleChange}>
+                        <option disabled selected id="firstOptionInstitution">-- Wybierz szkołe --</option>
+                        {institutionData.map((el) => {
+                            return <SelectItem key={el.idInstitution} id={el.idInstitution} name={el.name} community={el.community}/>
+                        })}
+                    </select> : ''}
+                    {currentlyEdited === 'programId' ?                     <select name="programsId" id="programsId" onChange={handleChange}>
+                        <option disabled selected id="firstOptionProgram">-- Wybierz program --</option>
+                        {programsData.map((el) => {
+                            return <SelectItem key={el.idProgram} id={el.idProgram} name={el.name}/>
+                        })}
+                    </select> : ''}
+                    {currentlyEdited === 'forWho' ?                     <select onChange={handleChange} name="forWho" id="forWho">
+                        <option disabled selected value='niepoprawna wartosc'>-- Wybierz dla kogo -- </option>
+                        <option value="rodzice">rodzice</option>
+                        <option value="nauczyciele">nauczyciele</option>
+                        <option value="uczniowie">uczniowie</option>
+                    </select> : ''}
+                    {areCheckboxesVisible && currentlyEdited === 'forWho' ? 
+                    <div id="checkboxDiv">
+                        <div style={{display: 'flex', alignContent: 'center'}}>
+                            <h3>Podstawa</h3>
+                            <div>
+                                <label htmlFor="beforeSchool1">Rok zycia 0-3</label>
+                                <input type="checkbox" id="beforeSchool1" name="beforeSchool1" value="0" onChange={handleCheckBox}/>
+                            </div>
+                            <div>
+                                <label htmlFor="beforeSchool2">PP (Przedszkole)</label>
+                                <input type="checkbox" id="beforeSchool2" name="beforeSchool2" value="1" onChange={handleCheckBox}/>
+                            </div>
+                            <div>
+                                <label htmlFor="beforeSchool3">Rok zycia 6</label>
+                                <input type="checkbox" id="beforeSchool3" name="beforeSchool3" value="2" onChange={handleCheckBox}/>
+                            </div>
+                            <div>
+                                <label htmlFor="class1">Klasa 1</label>
+                                <input type="checkbox" id="class1" name="class1" value="3" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class2">Klasa 2</label>
+                                <input type="checkbox" id="class2" name="class2" value="4" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class3">Klasa 3</label>
+                                <input type="checkbox" id="class3" name="class3" value="5" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class4">Klasa 4</label>
+                                <input type="checkbox" id="class4" name="class4" value="6" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class5">Klasa 5</label>
+                                <input type="checkbox" id="class5" name="class5" value="7" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class6">Klasa 6</label>
+                                <input type="checkbox" id="class6" name="class6" value="8" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class7">Klasa 7</label>
+                                <input type="checkbox" id="class7" name="class7" value="9" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class8">Klasa 8</label>
+                                <input type="checkbox" id="class8" name="class8" value="10" onChange={handleCheckBox}/>
+                            </div>
+                        </div>
+                        {/* 
+                        
+                        LICEUM:
+                        
+                        */}
+                        <div style={{display: 'flex', alignContent: 'center'}}>
+                            <h3>Licea i technika</h3>
+                            <div>
+                                <label htmlFor="class9">Klasa 1 (liceum)</label>
+                                <input type="checkbox" id="class9" name="class9" value="11" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class10">Klasa 2 (liceum)</label>
+                                <input type="checkbox" id="class10" name="class10" value="12" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class11">Klasa 3 (liceum)</label>
+                                <input type="checkbox" id="class11" name="class11" value="13" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class12">Klasa 4 (liceum)</label>
+                                <input type="checkbox" id="class12" name="class12" value="14" onChange={handleCheckBox}/>
+                            </div>
+
+                         {/* 
+                         
+                        Technikum
+                         
+                         */}
+
+                            <div>
+                                <label htmlFor="class13">Klasa 1 (technikum)</label>
+                                <input type="checkbox" id="class13" name="class13" value="15" onChange={handleCheckBox}/>
+                            </div>                         
+                            <div>
+                                <label htmlFor="class14">Klasa 2 (technikum)</label>
+                                <input type="checkbox" id="class14" name="class14" value="16" onChange={handleCheckBox}/>
+                            </div>                         
+                            <div>
+                                <label htmlFor="class15">Klasa 3 (technikum)</label>
+                                <input type="checkbox" id="class15" name="class15" value="17" onChange={handleCheckBox}/>
+                            </div>                         
+                            <div>
+                                <label htmlFor="class16">Klasa 4 (technikum)</label>
+                                <input type="checkbox" id="class16" name="class16" value="18" onChange={handleCheckBox}/>
+                            </div>                         
+                            <div>
+                                <label htmlFor="class17">Klasa 5 (technikum)</label>
+                                <input type="checkbox" id="class17" name="class17" value="19" onChange={handleCheckBox}/>
+                            </div>                         
+                        </div>
+
+                        {/* 
+                        
+                        BRANZOWE SZKOLY
+                        
+                        */}
+
+                        <div style={{display: 'flex', alignContent: 'center'}}>
+                            <h3>Klasy branzowe</h3>
+                            <div>
+                                <label htmlFor="class18">Klasa 1, I stopień(branzowa)</label>
+                                <input type="checkbox" id="class18" name="class18" value="20" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class19">Klasa 2, I stopień(branzowa)</label>
+                                <input type="checkbox" id="class19" name="class19" value="21" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class20">Klasa 3, I stopień(branzowa)</label>
+                                <input type="checkbox" id="class20" name="class20" value="22" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class21">Klasa 1, II stopień (branzowa)</label>
+                                <input type="checkbox" id="class21" name="class21" value="23" onChange={handleCheckBox}/>
+                            </div>
+
+                            <div>
+                                <label htmlFor="class22">Klasa 2, II stopień (branzowa)</label>
+                                <input type="checkbox" id="class22" name="class22" value="24" onChange={handleCheckBox}/>
+                            </div>
+                        </div>
+                    </div>
+                    : ""}                                        
+                    {/* <input type="text" onChange={handleChange} name="typeOfProgram" id="typeOfProgram" placeholder="Rodzaj zajęć.."/> */}
+                    {currentlyEdited === 'howManyParticipiants' ? <input type="number" onChange={handleChange} name="howManyParticipiants" id="howManyParticipiants" placeholder="Ilu uczestników.."/> : ''}
+                    {errors.howManyParticipiants !== ''  ? <ErrorBox>{errors.howManyParticipiants}</ErrorBox> : ''}
+                    {currentlyEdited === 'howManyPrograms' ? <input type="number" onChange={handleChange} name="howManyPrograms" id="howManyPrograms" placeholder="Ile form pomocy.."/> : ''}
+                    {errors.howManyPrograms !== ''  ? <ErrorBox>{errors.howManyPrograms}</ErrorBox> : ''}
+                    {currentlyEdited === 'differentNameProgram' ? <input type="text" onChange={handleChange} name="differentNameProgram" id="differentNameProgram" placeholder="Inna nazwa programu.."/> : ''}
+
+                    <AddButton to="#" onClick={() => { editItem("/updateData/event-edit",{dateOfEvent, employees, institutionId, programId, forWho, classes, howManyParticipiants, howManyPrograms, differentNameProgram}, props.id, setModal)}} style={ {backgroundColor: '#0f81d9'}}>Edytuj</AddButton>
+                    {/* {isFormValid() &&
+                        <p>Wprowadz wszystkie wymagane dane!</p>
+                    } */}
+                </Form>
+            </InnerWrapper>
+        </OuterWrapper> : 
+        
+        // Standard Form !!!!!!!
+        
         <OuterWrapper>
             <Navbar/>
             <InnerWrapper>
@@ -345,7 +560,8 @@ const FetchEvents = () => {
                 </Form>
                 <TableData whichTable="events" eventData={eventData} programsData={programsData} employeeData={employeeData} institutionData={institutionData}/>
             </InnerWrapper>
-        </OuterWrapper>
+        </OuterWrapper>}
+        </div>
     )
 }
 

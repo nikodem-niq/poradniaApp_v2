@@ -58,6 +58,55 @@ router.put('/institution-edit', verify, (req,res,next) => {
   })
 })
 
+router.put('/event-edit', verify, (req,res,next) => {
+  const { dateOfEvent, employees, institutionId, programId, forWho, classes, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
+  pool.connect().then(client => {
+    let query;
+    if(dateOfEvent) {
+      query = `UPDATE "programEvent" SET "dateOfEvent" = '${dateOfEvent}' WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(employees) {
+      query = `UPDATE "programEvent" SET employees = '${employees}' WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(institutionId) {
+      query = `UPDATE "programEvent" SET "institutionId" = ${institutionId} WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(programId) {
+      query = `UPDATE "programEvent" SET "programId" = ${programId} WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(forWho || classes) {
+      console.log(forWho, classes)
+      if(forWho === 0) {
+        query = `UPDATE "programEvent" SET classes = '${classes}', "forWho" = 0 WHERE "idEvent" = ${req.query.id}`
+        console.log(query)
+      } else {
+        query = `UPDATE "programEvent" SET "forWho" = ${forWho} WHERE "idEvent" = ${req.query.id}`
+        console.log(query)
+      }
+    }
+    else if(howManyParticipiants) {
+      query = `UPDATE "programEvent" SET "howManyParticipiants" = ${howManyParticipiants} WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(howManyPrograms) {
+      query = `UPDATE "programEvent" SET "howManyPrograms" = '${howManyPrograms}' WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(differentNameProgram) {
+      query = `UPDATE "programEvent" SET "differentNameProgram" = '${differentNameProgram}' WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    client.query(query).then(response => {
+      client.release();
+      res.status(200).json(response);
+    })
+  })
+})
+
 // Deleting items
 
 router.delete('/removeInstitution', verify, (req,res,next) => {

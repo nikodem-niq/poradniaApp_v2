@@ -143,7 +143,7 @@ export const AddInstitution = props => {
             <InnerWrapperTwo>
                 <Form>
                     {props.edit ? <ModalComponent setModal={isModal} name={dataToEdit.name} handleReset={handleReset} edit={true}/> : <ModalComponent setModal={isModal} name={nameOfInstitution} handleReset={handleReset}/>}
-                    {props.edit ? <h1>Formularz edycji placówki: <p style={{color: '#0f81d9'}}>{dataToEdit
+                    {props.edit ? <h1>Formularz edycji placówki <p style={{color: '#0f81d9'}}>{dataToEdit
                      ? dataToEdit.name : 'Nie znaleziono instytucji'}</p></h1> : <h1>Formularz dodania nowej placówki</h1>}
                     {props.edit ? <select name="editForm" id="editForm" onChange={handleChange}>
                         <option disabled selected>-- Wybierz co zmienić --</option>

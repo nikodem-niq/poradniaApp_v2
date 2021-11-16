@@ -81,7 +81,12 @@ router.get('/programs-get', verifyToken, (req,res,next) => {
 
 router.get('/events-get', verifyToken, (req,res,next) => {
   pool.connect().then(client => {
-    const query = `SELECT * FROM "programEvent";`
+    let query;
+    if(req.query.id) {
+      query = `SELECT * FROM "programEvent" WHERE "idEvent" = ${req.query.id}`;
+    } else {
+      query = `SELECT * FROM "programEvent"`
+    }
 
     client.query(query, (err,response) => {
       client.release();

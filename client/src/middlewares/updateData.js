@@ -4,7 +4,7 @@ export const editItem = (url, data, id, setModal) => {
     axios.put(`${url}?id=${id}`, data, { headers : { 'x-access-token' : localStorage.getItem('userToken')}}).then(res => {
         console.log(res);
         setModal(true);
-        setTimeout(() => {window.location.reload()}, 500);
+        setTimeout(() => {window.location.reload(); window.location.href = '/'}, 500);
     }).catch(err => {
         console.log(err);
     })

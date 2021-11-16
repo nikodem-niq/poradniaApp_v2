@@ -1,6 +1,8 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { OuterWrapper } from "../components/OuterWrapper";
+import FetchEvents from "./FetchEvents";
 import { AddInstitution } from "./FetchInstitution";
 
 
@@ -10,6 +12,8 @@ const EditPage = (props) => {
         switch(what) {
             case 'institution':
                 return <AddInstitution id={id} edit={true}/>
+            case 'event':
+                    return <FetchEvents id={id} edit={true}/>
             default:
                 break;
         }

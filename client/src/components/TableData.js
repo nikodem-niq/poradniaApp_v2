@@ -327,7 +327,7 @@ const TableData = (props) => {
                 <thead>
                 <tr>
                     <th>Lp.</th>
-                    <th>Data wizyty</th>
+                    <th>Data wizyty <h6>(DD-MM-RRRR)</h6> </th>
                     <th>Dane pracownika</th>
                     <th>Nazwa szkoły</th>
                     <th>Gmina</th>
@@ -374,7 +374,8 @@ const TableData = (props) => {
                         {/* <td>{defineForWho(findProgram.forWho, findProgram.classes)}</td> */}
                         <td class="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
                         {/* <DataButton width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Edytuj</DataButton> */}
-                        <DataButton class="removeBtn" onClick={() => {removeItem(el.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
+                        <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {removeItem(el.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
+                        <DataButton className="updateBtn" width="0.5rem" height="0.3rem" fontSize="0.8rem" to={`/edit/event/${el.idEvent}`}>Edytuj</DataButton>
                         </td>
                     </tr>
                     </tbody>
@@ -409,7 +410,7 @@ const TableItem = props => {
                     <td>{props.fax}</td>
                     <td className="actionRemoveData" style={{display: "flex", justifyContent: "space-evenly"}}>
                         <DataButton onClick={() => {removeItem(props.id, 'institution')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
-                        <DataButton class="updateBtn" width="0.5rem" height="0.3rem" fontSize="0.8rem" to={`/edit/institution/${props.id}`}>Edytuj</DataButton>
+                        <DataButton className="updateBtn" width="0.5rem" height="0.3rem" fontSize="0.8rem" to={`/edit/institution/${props.id}`}>Edytuj</DataButton>
                     </td>
                 </tr>
                 </tbody>
@@ -583,6 +584,10 @@ table tr:nth-child(even){
 
 tr:hover {
     background-color: #dcdde1;
+}
+
+th > tr:first-child {
+    font-size: 2rem;
 }
 
 
