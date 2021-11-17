@@ -20,8 +20,8 @@ const FetchEvents = props => {
     const [employees, setEmployee] = useState("");
     const [institutionId, setInstitutionId] = useState("");
     const [programId, setProgramId] = useState("");
-    const [forWho, setForWho] = useState(0);
-    const [classes, setClasses] = useState([]);
+    const [forWho, setForWho] = useState("");
+    const [classes, setClasses] = useState("");
     const [howManyParticipiants, setHowManyParticipiants] = useState("");
     const [howManyPrograms, setHowManyPrograms] = useState("");
     const [differentNameProgram, setDifferentNameProgram] = useState("");

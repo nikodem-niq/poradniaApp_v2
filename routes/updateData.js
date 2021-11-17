@@ -60,6 +60,7 @@ router.put('/institution-edit', verify, (req,res,next) => {
 
 router.put('/event-edit', verify, (req,res,next) => {
   const { dateOfEvent, employees, institutionId, programId, forWho, classes, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
+  console.log(dateOfEvent,employees,institutionId,programId,forWho,classes,howManyParticipiants,howManyPrograms,differentNameProgram);
   pool.connect().then(client => {
     let query;
     if(dateOfEvent) {
