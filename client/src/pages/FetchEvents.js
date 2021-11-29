@@ -4,17 +4,26 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import { OuterWrapper } from "../components/OuterWrapper";
-import TableData from "../components/TableData";
+// import TableData from "../components/TableData";
 import { postData } from "../middlewares/postData";
 import ModalComponent from "../components/ModalComponent";
 import { ErrorBox } from "../components/InputErrorBox";
 import { validate } from "../middlewares/validate";
-import { editItem } from "../middlewares/updateData";
+import { editItem } from "../middlewares/updateData"
+import { removeItem } from "../middlewares/updateData"
+import { DataButton } from "../components/ControllerBlock"
+import FadingBalls from "react-cssfx-loading/lib/FadingBalls";
+
+
+import { DataGrid, plPL, GridToolbar } from '@mui/x-data-grid';
+import { defineForWho } from '../middlewares/defineForWho';
+
 
 const employeesNames = [];
 let classesArray = new Array(25).fill(false);
 
 const FetchEvents = props => {
+    const [isLoading, setLoading] = useState(true);
     // Posting
     const [dateOfEvent, setDateOfEvent] = useState("");
     const [employees, setEmployee] = useState("");
@@ -139,18 +148,70 @@ const FetchEvents = props => {
             '/fetchData/events-get'
         ]
 
+
+
         axios.all(endpoints.map((endpoint) => axios.get(endpoint, {headers: { 'x-access-token' : localStorage.getItem('userToken') }}))).then(
             axios.spread(( institution, employee, programs, events ) => {
+                setLoading(true);
                 setInstitutionData(institution.data.rows);
                 setEmployeeData(employee.data.rows);
                 setProgramsData(programs.data.rows);
+                events.data.rows.map((row, i) => {
+                    row['id'] = i+1;
+                    row['definedForWho'] = defineForWho(row.forWho, row.classes)
+                    row['institutionName'] = institution.data.rows.filter((el) => {
+                        return el.idInstitution === row.institutionId;
+                    })[0].name
+                    row['institutionCommunity'] = institution.data.rows.filter((el) => {
+                        return el.idInstitution === row.institutionId;
+                    })[0].community
+                    row['programName'] = programs.data.rows.filter((el) => {
+                        return el.idProgram === row.programId;
+                    })[0].name
+                    row['programType'] = programs.data.rows.filter((el) => {
+                        return el.idProgram === row.programId;
+                    })[0].typeOfProgram
+                })
                 setEventData(events.data.rows);
+                setLoading(false);
             })
           );
 
 
         setReload(false);
     }, [props.edit, ifReload])
+
+    const columns = [
+        { field: "id", headerName: "Lp", width: 80 },
+        {
+          field: "dateOfEvent",
+          headerName: "Data wizyty",
+          width: 100,
+        },
+        { field: "employees", headerName: "Dane pracowników", minWidth: 400, },
+        { field: "institutionName", headerName: "Nazwa szkoły", width: 300 },
+        { field: "institutionCommunity", headerName: "Gmina", width: 150 },
+        { field: "programName", headerName: "Nazwa zajęć", width: 150 },
+        { field: "programType", headerName: "Rodzaj zajęć", minWidth: 300 },
+        { field: "definedForWho", headerName: "Dla kogo", width: 350 },
+        { field: "howManyParticipiants", headerName: "Liczba uczestników", width: 90 },
+        { field: "howManyPrograms", headerName: "Liczba form pomocy", width: 90 },
+        { field: "differentNameProgram", headerName: "Inna nazwa", width: 120 },
+        {
+          field: "action",
+          headerName: "Action",
+          width: 150,
+          renderCell: (params) => {
+            return (
+              <>
+                {/* <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {console.log(params.row.idEvent)}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">sprawdz params</DataButton> */}
+                <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {removeItem(params.row.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
+                <DataButton className="updateBtn" width="0.5rem" height="0.3rem" fontSize="0.8rem" to={`/edit/event/${params.row.idEvent}`}>Edytuj</DataButton>
+              </>
+            );
+          },
+        },
+      ];
 
     
 
@@ -159,8 +220,12 @@ const FetchEvents = props => {
         return isValid ? '' : 'disabled';
     }
 
-    return (
-        // EDIT FORM
+    if(isLoading) {
+        return (
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}><FadingBalls color="#3a43cc" width="20px" height="20px" duration="2s" /></div>
+        )
+    } else {
+  return (
 
         <div>
             {props.edit ?  <OuterWrapper> 
@@ -558,11 +623,33 @@ const FetchEvents = props => {
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }
                 </Form>
-                <TableData whichTable="events" eventData={eventData} programsData={programsData} employeeData={employeeData} institutionData={institutionData}/>
+                {/* <TableData whichTable="events" eventData={eventData} programsData={programsData} employeeData={employeeData} institutionData={institutionData}/> */}
+                <div id="dataGridTable" style={{width: '100%', height: '800px'}}>
+
+                    <DataGrid
+                    rows={eventData}
+                    disableSelectionOnClick
+                    columns={columns}
+                    pageSize={48}
+                    isLoading={isLoading}
+                    disableColumnResize={false}
+                    localeText={{
+                        toolbarDensity: 'Size',
+                        toolbarDensityLabel: 'Size',
+                        toolbarDensityCompact: 'Small',
+                        toolbarDensityStandard: 'Medium',
+                        toolbarDensityComfortable: 'Large',
+                      }}
+                      components={{
+                        Toolbar: GridToolbar,
+                      }}
+                    // localeText={plPL.props.MuiDataGrid.localeText}
+                    />
+                </div>
             </InnerWrapper>
         </OuterWrapper>}
         </div>
-    )
+    )}
 }
 
 const SelectItem = props => {
@@ -587,6 +674,11 @@ const InnerWrapper = styled.div`
     flex-direction: column;
     width: 100%;
     height: auto;
+
+
+    #dataGridTable {
+        font-size: 12px;
+    }
 `
 
 const AddButton = styled(Link)`

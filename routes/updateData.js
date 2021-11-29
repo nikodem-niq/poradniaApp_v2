@@ -12,6 +12,17 @@ const pool = new pg.Pool({
   }
 });
 
+//DEMO DB
+// const demoCredentials = {
+//   user: "postgres",
+//   host: "localhost",
+//   database: "poradniademo",
+//   password: "",
+//   port: 5432,
+// };
+
+// const pool = new pg.Pool(demoCredentials)
+
 
 // Update data
 
@@ -101,6 +112,7 @@ router.put('/event-edit', verify, (req,res,next) => {
       query = `UPDATE "programEvent" SET "differentNameProgram" = '${differentNameProgram}' WHERE "idEvent" = ${req.query.id}`
       console.log(query)
     }
+    console.log(query);
     client.query(query).then(response => {
       client.release();
       res.status(200).json(response);

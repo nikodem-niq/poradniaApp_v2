@@ -11,6 +11,18 @@ const pool = new pg.Pool({
   }
 });
 
+
+//DEMO DB
+// const demoCredentials = {
+//   user: "postgres",
+//   host: "localhost",
+//   database: "poradniademo",
+//   password: "",
+//   port: 5432,
+// };
+
+// const pool = new pg.Pool(demoCredentials)
+
 router.get('/institution-get', verifyToken, (req,res,next) => {
   pool.connect().then(client => {
         // Fetch all  

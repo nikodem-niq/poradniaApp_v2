@@ -12,6 +12,17 @@ const pool = new pg.Pool({
   }
 });
 
+//DEMO DB
+// const demoCredentials = {
+//   user: "postgres",
+//   host: "localhost",
+//   database: "poradniademo",
+//   password: "",
+//   port: 5432,
+// };
+
+// const pool = new pg.Pool(demoCredentials)
+
 router.post('/institution-add', verifyToken, (req,res,next) => {
   const { nameOfInstitution, email, city, community, postalCode, address, telephone, fax } = req.body;
   if(!(nameOfInstitution && email && city && community && postalCode && address && telephone)) {

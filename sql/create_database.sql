@@ -1,30 +1,30 @@
--- CREATE TABLE "institution" (
--- 	"idInstitution" serial NOT NULL,
--- 	"name" varchar(255) NOT NULL,
--- 	"email" varchar(255) NOT NULL,
--- 	"city" varchar(255) NOT NULL,
--- 	"community" varchar(255) NOT NULL,
--- 	"postalCode" varchar(10) NOT NULL,
--- 	"address" varchar(255) NOT NULL,
--- 	"telephone" varchar(30) NOT NULL,
--- 	"fax" varchar(30),
--- 	CONSTRAINT "institution_pk" PRIMARY KEY ("idInstitution")
--- ) WITH (
---   OIDS=FALSE
--- );
+CREATE TABLE "institution" (
+	"idInstitution" serial NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"city" varchar(255) NOT NULL,
+	"community" varchar(255) NOT NULL,
+	"postalCode" varchar(10) NOT NULL,
+	"address" varchar(255) NOT NULL,
+	"telephone" varchar(30) NOT NULL,
+	"fax" varchar(30),
+	CONSTRAINT "institution_pk" PRIMARY KEY ("idInstitution")
+) WITH (
+  OIDS=FALSE
+);
 
 
 
--- CREATE TABLE "employee" (
--- 	"idEmployee" serial NOT NULL,
--- 	"firstName" varchar(150) NOT NULL,
--- 	"secondName" varchar(150),
--- 	"lastName" varchar(150) NOT NULL,
--- 	"age" int NOT NULL,
--- 	CONSTRAINT "employee_pk" PRIMARY KEY ("idEmployee")
--- ) WITH (
---   OIDS=FALSE
--- );
+CREATE TABLE "employee" (
+	"idEmployee" serial NOT NULL,
+	"firstName" varchar(150) NOT NULL,
+	"secondName" varchar(150),
+	"lastName" varchar(150) NOT NULL,
+	"age" int NOT NULL,
+	CONSTRAINT "employee_pk" PRIMARY KEY ("idEmployee")
+) WITH (
+  OIDS=FALSE
+);
 
 
 
