@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
@@ -13,14 +13,45 @@ import { editItem } from "../middlewares/updateData"
 import { removeItem } from "../middlewares/updateData"
 import { DataButton } from "../components/ControllerBlock"
 import FadingBalls from "react-cssfx-loading/lib/FadingBalls";
+import saveAs from 'file-saver';
+
+
+import Paper from '@material-ui/core/Paper';
+import {
+  SummaryState,
+  IntegratedSummary,
+  DataTypeProvider,
+  FilteringState,
+  IntegratedFiltering,
+} from '@devexpress/dx-react-grid';
+import {
+  Grid,
+  Table,
+  TableHeaderRow,
+  TableSummaryRow,
+  TableFilterRow,
+  Toolbar,
+  ExportPanel
+} from '@devexpress/dx-react-grid-material-ui';
+import { GridExporter } from '@devexpress/dx-react-grid-export';
+
 
 
 import { DataGrid, plPL, GridToolbar } from '@mui/x-data-grid';
 import { defineForWho } from '../middlewares/defineForWho';
+import { Box } from "@mui/material";
+
 
 
 const employeesNames = [];
 let classesArray = new Array(25).fill(false);
+
+
+const onSave = (workbook) => {
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'dane.xlsx');
+    });
+  };
 
 const FetchEvents = props => {
     const [isLoading, setLoading] = useState(true);
@@ -49,8 +80,11 @@ const FetchEvents = props => {
     const [currentlyEdited, setCurrentlyEdited] = useState('');
     const [dataToEdit, setDataToEdit] = useState([]);
 
+    const exporterRef = useRef(null);
 
-
+    const startExport = useCallback(() => {
+      exporterRef.current.exportGrid();
+    }, [exporterRef]);
 
     const handleChange = (event) => {
         validate(event.target.name,event.target.value,errors,setErrors)
@@ -181,37 +215,65 @@ const FetchEvents = props => {
         setReload(false);
     }, [props.edit, ifReload])
 
-    const columns = [
-        { field: "id", headerName: "Lp", width: 80 },
-        {
-          field: "dateOfEvent",
-          headerName: "Data wizyty",
-          width: 100,
-        },
-        { field: "employees", headerName: "Dane pracowników", minWidth: 400, },
-        { field: "institutionName", headerName: "Nazwa szkoły", width: 300 },
-        { field: "institutionCommunity", headerName: "Gmina", width: 150 },
-        { field: "programName", headerName: "Nazwa zajęć", width: 150 },
-        { field: "programType", headerName: "Rodzaj zajęć", minWidth: 300 },
-        { field: "definedForWho", headerName: "Dla kogo", width: 350 },
-        { field: "howManyParticipiants", headerName: "Liczba uczestników", width: 90 },
-        { field: "howManyPrograms", headerName: "Liczba form pomocy", width: 90 },
-        { field: "differentNameProgram", headerName: "Inna nazwa", width: 120 },
-        {
-          field: "action",
-          headerName: "Action",
-          width: 150,
-          renderCell: (params) => {
-            return (
-              <>
-                {/* <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {console.log(params.row.idEvent)}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">sprawdz params</DataButton> */}
-                <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {removeItem(params.row.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
-                <DataButton className="updateBtn" width="0.5rem" height="0.3rem" fontSize="0.8rem" to={`/edit/event/${params.row.idEvent}`}>Edytuj</DataButton>
-              </>
-            );
-          },
-        },
-      ];
+    // const columns = [
+    //     { field: "id", headerName: "Lp", width: 80 },
+    //     {
+    //       field: "dateOfEvent",
+    //       headerName: "Data wizyty",
+    //       width: 100,
+    //     },
+    //     { field: "employees", headerName: "Dane pracowników", minWidth: 400, },
+    //     { field: "institutionName", headerName: "Nazwa szkoły", width: 300 },
+    //     { field: "institutionCommunity", headerName: "Gmina", width: 150 },
+    //     { field: "programName", headerName: "Nazwa zajęć", width: 150 },
+    //     { field: "programType", headerName: "Rodzaj zajęć", minWidth: 300 },
+    //     { field: "definedForWho", headerName: "Dla kogo", width: 350 },
+    //     { field: "howManyParticipiants", headerName: "Liczba uczestników", width: 90 },
+    //     { field: "howManyParticipiantsAll", headerName: "Liczba uczestników razem", width: 90, renderCell: (params) => {
+    //         return (
+    //             <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {console.log(params.row.howManyParticipiants)}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">ile razem</DataButton>
+    //         )
+    //     }},
+    //     { field: "howManyPrograms", headerName: "Liczba form pomocy", width: 90 },
+    //     { field: "differentNameProgram", headerName: "Inna nazwa", width: 120 },
+    //     {
+    //       field: "action",
+    //       headerName: "Action",
+    //       width: 150,
+    //       renderCell: (params) => {
+    //         return (
+    //           <>
+    //             {/* <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {console.log(params.row.idEvent)}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">sprawdz params</DataButton> */}
+    //             <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {removeItem(params.row.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
+    //             <DataButton className="updateBtn" width="0.5rem" height="0.3rem" fontSize="0.8rem" to={`/edit/event/${params.row.idEvent}`}>Edytuj</DataButton>
+    //           </>
+    //         );
+    //       },
+    //     },
+    //   ];
+
+    const [columns] = useState([
+        { name: 'id', title: 'Lp' },
+        { name: 'dateOfEvent', title: 'Data' },
+        { name: 'employees', title: 'Pracownicy' },
+        { name: 'institutionName', title: 'Nazwa szkoły' },
+        { name: 'institutionCommunity', title: 'Gmina' },
+        { name: 'programName', title: 'Nazwa programu' },
+        { name: 'programType', title: 'Typ programu' },
+        { name: 'definedForWho', title: 'Dla kogo' },
+        { name: 'howManyParticipiants', title: 'Ilu uczestnikow' },
+        { name: 'howManyPrograms', title: 'Liczba form pomocy' },
+        { name: 'differentNameProgram', title: 'Inna nazwa' },
+      ]);
+
+    //   const [rows] = useState(generateRows({ columnValues: globalSalesValues, length: 8 }));
+      const [tableColumnExtensions] = useState([
+        { columnName: 'amount', align: 'right' },
+      ]);
+      const [totalSummaryItems] = useState([
+        { columnName: 'id', type: 'count' },
+        { columnName: 'howManyParticipiants', type: 'sum' },
+      ]);
 
     
 
@@ -624,7 +686,7 @@ const FetchEvents = props => {
                     }
                 </Form>
                 {/* <TableData whichTable="events" eventData={eventData} programsData={programsData} employeeData={employeeData} institutionData={institutionData}/> */}
-                <div id="dataGridTable" style={{width: '100%', height: '800px'}}>
+                {/* <div id="dataGridTable" style={{width: '100%', height: '800px'}}>
 
                     <DataGrid
                     rows={eventData}
@@ -642,15 +704,51 @@ const FetchEvents = props => {
                       }}
                       components={{
                         Toolbar: GridToolbar,
+                        Footer: CustomFooterStatusComponent
                       }}
                     // localeText={plPL.props.MuiDataGrid.localeText}
                     />
-                </div>
+                </div> */}
+                <Paper>
+                    <Grid
+                        rows={eventData}
+                        columns={columns}
+                    >
+                        <FilteringState defaultFilters={[]} />
+                        <IntegratedFiltering />
+                        <SummaryState
+                        totalItems={totalSummaryItems}
+                        />
+                        <IntegratedSummary />
+                        <Table
+                        columnExtensions={tableColumnExtensions}
+                        />
+                        <TableHeaderRow />
+                        <TableSummaryRow />
+                        <TableFilterRow/>
+                        <Toolbar/>
+                        <ExportPanel startExport={startExport} />
+                    </Grid>
+                    <GridExporter
+                        ref={exporterRef}
+                        rows={eventData}
+                        columns={columns}
+                        onSave={onSave}
+                    />
+                </Paper>
             </InnerWrapper>
         </OuterWrapper>}
         </div>
     )}
 }
+
+function CustomFooterStatusComponent(props) {
+    return (
+      <Box sx={{ padding: '10px', display: 'flex' }}>
+        <h1>s</h1>
+      </Box>
+    );
+  }
 
 const SelectItem = props => {
 
