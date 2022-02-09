@@ -9,7 +9,7 @@ import Auth from './components/Auth';
 import FetchInstitution from './pages/FetchInstitution';
 import FetchEmployee from './pages/FetchEmployee';
 import FetchPrograms from './pages/FetchPrograms';
-import FetchEvents from './pages/FetchEvents';
+import FetchEvents from './pages/FetchEvents.js';
 import SearchPage from './pages/SearchPage';
 import EditPage from './pages/EditPage';
 import NotFoundPage from './pages/NotFoundPage';

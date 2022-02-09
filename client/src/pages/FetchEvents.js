@@ -15,9 +15,10 @@ import { DataButton } from "../components/ControllerBlock"
 import FadingBalls from "react-cssfx-loading/lib/FadingBalls";
 import saveAs from 'file-saver';
 
-
 import Paper from '@material-ui/core/Paper';
 import {
+  IntegratedSelection,
+  SelectionState,
   SummaryState,
   IntegratedSummary,
   DataTypeProvider,
@@ -31,11 +32,10 @@ import {
   TableSummaryRow,
   TableFilterRow,
   Toolbar,
-  ExportPanel
+  ExportPanel,
+  TableSelection
 } from '@devexpress/dx-react-grid-material-ui';
 import { GridExporter } from '@devexpress/dx-react-grid-export';
-
-
 
 import { DataGrid, plPL, GridToolbar } from '@mui/x-data-grid';
 import { defineForWho } from '../middlewares/defineForWho';
@@ -79,6 +79,10 @@ const FetchEvents = props => {
 
     const [currentlyEdited, setCurrentlyEdited] = useState('');
     const [dataToEdit, setDataToEdit] = useState([]);
+
+    const [selection, setSelection] = useState([]);
+    const [selectedRowsData, setSelectedRowsData] = useState([]);
+
 
     const exporterRef = useRef(null);
 
@@ -215,45 +219,9 @@ const FetchEvents = props => {
         setReload(false);
     }, [props.edit, ifReload])
 
-    // const columns = [
-    //     { field: "id", headerName: "Lp", width: 80 },
-    //     {
-    //       field: "dateOfEvent",
-    //       headerName: "Data wizyty",
-    //       width: 100,
-    //     },
-    //     { field: "employees", headerName: "Dane pracowników", minWidth: 400, },
-    //     { field: "institutionName", headerName: "Nazwa szkoły", width: 300 },
-    //     { field: "institutionCommunity", headerName: "Gmina", width: 150 },
-    //     { field: "programName", headerName: "Nazwa zajęć", width: 150 },
-    //     { field: "programType", headerName: "Rodzaj zajęć", minWidth: 300 },
-    //     { field: "definedForWho", headerName: "Dla kogo", width: 350 },
-    //     { field: "howManyParticipiants", headerName: "Liczba uczestników", width: 90 },
-    //     { field: "howManyParticipiantsAll", headerName: "Liczba uczestników razem", width: 90, renderCell: (params) => {
-    //         return (
-    //             <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {console.log(params.row.howManyParticipiants)}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">ile razem</DataButton>
-    //         )
-    //     }},
-    //     { field: "howManyPrograms", headerName: "Liczba form pomocy", width: 90 },
-    //     { field: "differentNameProgram", headerName: "Inna nazwa", width: 120 },
-    //     {
-    //       field: "action",
-    //       headerName: "Action",
-    //       width: 150,
-    //       renderCell: (params) => {
-    //         return (
-    //           <>
-    //             {/* <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {console.log(params.row.idEvent)}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">sprawdz params</DataButton> */}
-    //             <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {removeItem(params.row.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton>
-    //             <DataButton className="updateBtn" width="0.5rem" height="0.3rem" fontSize="0.8rem" to={`/edit/event/${params.row.idEvent}`}>Edytuj</DataButton>
-    //           </>
-    //         );
-    //       },
-    //     },
-    //   ];
-
     const [columns] = useState([
         { name: 'id', title: 'Lp' },
+        { name: 'idEvent', title: 'ID Wydarzenia' },
         { name: 'dateOfEvent', title: 'Data' },
         { name: 'employees', title: 'Pracownicy' },
         { name: 'institutionName', title: 'Nazwa szkoły' },
@@ -266,7 +234,6 @@ const FetchEvents = props => {
         { name: 'differentNameProgram', title: 'Inna nazwa' },
       ]);
 
-    //   const [rows] = useState(generateRows({ columnValues: globalSalesValues, length: 8 }));
       const [tableColumnExtensions] = useState([
         { columnName: 'amount', align: 'right' },
       ]);
@@ -275,6 +242,15 @@ const FetchEvents = props => {
         { columnName: 'howManyParticipiants', type: 'sum' },
       ]);
 
+      const getRowId = row => row.id;
+
+      const changeSelection = selection =>
+      {
+      setSelectedRowsData(eventData.filter(
+        row =>
+          selection.findIndex(selectId => selectId+1 === getRowId(row)) !== -1)
+          )
+        }
     
 
     const isFormValid = () =>{
@@ -685,35 +661,18 @@ const FetchEvents = props => {
                         <p>Wprowadz wszystkie wymagane dane!</p>
                     }
                 </Form>
-                {/* <TableData whichTable="events" eventData={eventData} programsData={programsData} employeeData={employeeData} institutionData={institutionData}/> */}
-                {/* <div id="dataGridTable" style={{width: '100%', height: '800px'}}>
+                {!selectedRowsData[0] ? 'Zaznacz wydarzenie aby zobaczyć szczegóły..' : <SelectedEvent selectedRow={selectedRowsData[0]}/>}
 
-                    <DataGrid
-                    rows={eventData}
-                    disableSelectionOnClick
-                    columns={columns}
-                    pageSize={48}
-                    isLoading={isLoading}
-                    disableColumnResize={false}
-                    localeText={{
-                        toolbarDensity: 'Size',
-                        toolbarDensityLabel: 'Size',
-                        toolbarDensityCompact: 'Small',
-                        toolbarDensityStandard: 'Medium',
-                        toolbarDensityComfortable: 'Large',
-                      }}
-                      components={{
-                        Toolbar: GridToolbar,
-                        Footer: CustomFooterStatusComponent
-                      }}
-                    // localeText={plPL.props.MuiDataGrid.localeText}
-                    />
-                </div> */}
                 <Paper>
                     <Grid
                         rows={eventData}
                         columns={columns}
+                        
                     >
+                        <SelectionState
+                            selection={selection}
+                            onSelectionChange={changeSelection}
+                        />
                         <FilteringState defaultFilters={[]} />
                         <IntegratedFiltering />
                         <SummaryState
@@ -723,11 +682,14 @@ const FetchEvents = props => {
                         <Table
                         columnExtensions={tableColumnExtensions}
                         />
+
                         <TableHeaderRow />
                         <TableSummaryRow />
                         <TableFilterRow/>
                         <Toolbar/>
                         <ExportPanel startExport={startExport} />
+                        <IntegratedSelection />
+                        <TableSelection showSelectAll />
                     </Grid>
                     <GridExporter
                         ref={exporterRef}
@@ -767,12 +729,66 @@ const SelectEmployee = props => {
     </select>)
 }
 
+const SelectedEvent = props => {
+    return (
+        <table id="selectedRowTable">
+            <h3>Aktualnie zaznaczone wydarzenie</h3>
+            <tr>
+                <td>Akcje</td>
+                <td>ID Wydarzenia</td>
+                <td>Data</td>
+                <td>Pracownicy</td>
+                <td>Nazwa szkoły</td>
+                <td>Gmina</td>
+                <td>Nazwa programu</td>
+                <td>Typ programu</td>
+                <td>Dla kogo</td>
+                <td>Ilu uczestników</td>
+                <td>Liczba form pomocy</td>
+                <td>Inna nazwa</td>
+            </tr>
+            <tr>
+                <td><DataButton className="updateBtn" width="0.5rem" height="0.3rem" fontSize="0.8rem" to={`/edit/event/${props.selectedRow.idEvent}`}>Edytuj</DataButton>
+                    <DataButton className="removeBtn" style={{margin: '0rem 0.3rem'}} onClick={() => {removeItem(props.selectedRow.idEvent, 'event')}} width="0.5rem" height="0.3rem" fontSize="0.8rem" to="#">Usuń</DataButton> 
+</td>
+                <td>{props.selectedRow.idEvent}</td>
+                <td>{props.selectedRow.dateOfEvent}</td>
+                <td>{props.selectedRow.employees}</td>
+                <td>{props.selectedRow.institutionName}</td>
+                <td>{props.selectedRow.institutionCommunity}</td>
+                <td>{props.selectedRow.programName}</td>
+                <td>{props.selectedRow.programType}</td>
+                <td>{props.selectedRow.definedForWho}</td>
+                <td>{props.selectedRow.howManyParticipiants}</td>
+                <td>{props.selectedRow.howManyPrograms}</td>
+                <td>{props.selectedRow.differentNameProgram}</td>
+            </tr>
+        </table>    
+    )
+}
+
 const InnerWrapper = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
     height: auto;
 
+    #selectedRowTable {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    #selectedRowTable tr {
+        width: 100%;
+    }
+
+    #selectedRowTable td {
+        padding: 0 2rem;
+    }
 
     #dataGridTable {
         font-size: 12px;
