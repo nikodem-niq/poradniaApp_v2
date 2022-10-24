@@ -120,6 +120,57 @@ router.put('/event-edit', verify, (req,res,next) => {
   })
 })
 
+router.put('/event-edit-2022-2023', verify, (req,res,next) => {
+  const { dateOfEvent, employees, institutionId, programId, forWho, classes, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
+  console.log(dateOfEvent,employees,institutionId,programId,forWho,classes,howManyParticipiants,howManyPrograms,differentNameProgram);
+  pool.connect().then(client => {
+    let query;
+    if(dateOfEvent) {
+      query = `UPDATE "programEvent_22_23" SET "dateOfEvent" = '${dateOfEvent}' WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(employees) {
+      query = `UPDATE "programEvent_22_23" SET employees = '${employees}' WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(institutionId) {
+      query = `UPDATE "programEvent_22_23" SET "institutionId" = ${institutionId} WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(programId) {
+      query = `UPDATE "programEvent_22_23" SET "programId" = ${programId} WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(forWho || classes) {
+      console.log(forWho, classes)
+      if(forWho === 0) {
+        query = `UPDATE "programEvent_22_23" SET classes = '${classes}', "forWho" = 0 WHERE "idEvent" = ${req.query.id}`
+        console.log(query)
+      } else {
+        query = `UPDATE "programEvent_22_23" SET "forWho" = ${forWho} WHERE "idEvent" = ${req.query.id}`
+        console.log(query)
+      }
+    }
+    else if(howManyParticipiants) {
+      query = `UPDATE "programEvent_22_23" SET "howManyParticipiants" = ${howManyParticipiants} WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(howManyPrograms) {
+      query = `UPDATE "programEvent_22_23" SET "howManyPrograms" = '${howManyPrograms}' WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    else if(differentNameProgram) {
+      query = `UPDATE "programEvent_22_23" SET "differentNameProgram" = '${differentNameProgram}' WHERE "idEvent" = ${req.query.id}`
+      console.log(query)
+    }
+    console.log(query);
+    client.query(query).then(response => {
+      client.release();
+      res.status(200).json(response);
+    })
+  })
+})
+
 // Deleting items
 
 router.delete('/removeInstitution', verify, (req,res,next) => {
@@ -168,6 +219,20 @@ router.delete('/removeEvent', verify, (req,res,next) => {
   const { id } = req.query;
   pool.connect().then((client) => {
     client.query(`DELETE FROM "programEvent" WHERE "idEvent" = '${id}'`).then(response => {
+      client.release();
+      res.status(200).json(response);
+    }).catch(err => {
+      client.release();
+      console.log(err);
+      res.status(403).json(err);
+    })
+  })
+})
+
+router.delete('/removeEvent-2022-2023', verify, (req,res,next) => {
+  const { id } = req.query;
+  pool.connect().then((client) => {
+    client.query(`DELETE FROM "programEvent_22_23" WHERE "idEvent" = '${id}'`).then(response => {
       client.release();
       res.status(200).json(response);
     }).catch(err => {

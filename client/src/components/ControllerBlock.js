@@ -20,14 +20,14 @@ const ControllerBlock = props => {
                     <DataButton to="/programs">Dane</DataButton>
                 </ButtonWrapper>
             </Block>
-            <Block>Wydarzenia (wyjazd terenowy)
+            <Block>Wydarzenia (wyjazd terenowy 2021/2022)
                 <ButtonWrapper>
                     <DataButton to="/events">Dane</DataButton>
                 </ButtonWrapper>
             </Block>
-            <Block>Zaawansowane wyszukiwanie
+            <Block>Wydarzenia (wyjazd terenowy 2022/2023)
                 <ButtonWrapper>
-                    <DataButton to="/search">Wyszukiwanie</DataButton>
+                    <DataButton to="/events2">Dane</DataButton>
                 </ButtonWrapper>
             </Block>
         </OuterWrapper>

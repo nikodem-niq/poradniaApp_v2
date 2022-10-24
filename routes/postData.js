@@ -101,6 +101,27 @@ router.post('/event-add', verifyToken, (req,res,next) => {
   }
 })
 
+router.post('/event-add-2022-2023', verifyToken, (req,res,next) => {
+  const { dateOfEvent, employees, institutionId, programId, forWho, classes, howManyParticipiants, howManyPrograms, differentNameProgram } = req.body;
+  if(!(dateOfEvent)) {
+    res.status(403).json({message: "Invalid parameters"});
+  } else {    
+    pool.connect().then(client => {
+      const query = `INSERT INTO "programEvent_22_23"("dateOfEvent", "employees", "institutionId", "programId", "forWho", "classes", "howManyParticipiants", "howManyPrograms", "differentNameProgram") VALUES('${dateOfEvent}', '${employees}', ${institutionId}, ${programId}, ${forWho}, '${classes}', ${howManyParticipiants}, ${howManyPrograms}, '${differentNameProgram}')`
+      // console.log(query)
+      client.query(query, (err, response) => {
+        client.release();
+        if(err) {
+          console.log(err);
+          res.status(400).json(err);
+        } else {
+          res.status(200).json(response);
+        }
+      });
+    })
+  }
+})
+
 router.post('/search', verifyToken, async (req,res,next) => {
   const client = await pool.connect()
   // Querying 

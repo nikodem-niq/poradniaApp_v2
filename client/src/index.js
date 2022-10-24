@@ -10,6 +10,7 @@ import FetchInstitution from './pages/FetchInstitution';
 import FetchEmployee from './pages/FetchEmployee';
 import FetchPrograms from './pages/FetchPrograms';
 import FetchEvents from './pages/FetchEvents.js';
+import FetchEvents2 from './pages/FetchEvents2.js';
 import SearchPage from './pages/SearchPage';
 import EditPage from './pages/EditPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -27,6 +28,7 @@ const App = () => {
           <PrivateRoute component={FetchEmployee} path="/employee"/>
           <PrivateRoute component={FetchPrograms} path="/programs"/>
           <PrivateRoute component={FetchEvents} path="/events"/>
+          <PrivateRoute component={FetchEvents2} path="/events2"/>
 
           <PrivateRoute component={SearchPage} path="/search"/>
 
