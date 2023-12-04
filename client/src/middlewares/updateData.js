@@ -50,6 +50,13 @@ export const removeItem = (id, item, setModal) => {
                 console.log(err);
             })
             break;
+        case 'event3':
+            axios.delete(`/updateData/removeEvent-2023-2024?id=${id}`, { headers : { 'x-access-token' : localStorage.getItem('userToken')}}).then(res => {
+                window.location.reload();
+            }).catch(err => {
+                console.log(err);
+            })
+            break;
         default:
             console.log('bad "delete" parameters');
             break;

@@ -133,4 +133,25 @@ router.get('/events-get-2022-2023', verifyToken, (req,res,next) => {
   })
 })
 
+router.get('/events-get-2023-2024', verifyToken, (req,res,next) => {
+  pool.connect().then(client => {
+    let query;
+    if(req.query.id) {
+      query = `SELECT * FROM public."programEvent_23_24" WHERE "idEvent" = ${req.query.id}`;
+    } else {
+      query = `SELECT * FROM public."programEvent_23_24"`
+    }
+
+    client.query(query, (err,response) => {
+      client.release();
+      if(err) {
+        console.log(err)
+        res.status(403).json(err)
+      } else {
+        res.status(200).json(response);
+      }
+    })
+  })
+})
+
 module.exports = router;

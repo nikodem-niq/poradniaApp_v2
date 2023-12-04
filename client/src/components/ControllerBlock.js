@@ -30,6 +30,11 @@ const ControllerBlock = props => {
                     <DataButton to="/events2">Dane</DataButton>
                 </ButtonWrapper>
             </Block>
+            <Block>Wydarzenia (wyjazd terenowy 2023/2024)
+                <ButtonWrapper>
+                    <DataButton to="/events3">Dane</DataButton>
+                </ButtonWrapper>
+            </Block>
         </OuterWrapper>
     )
 }
